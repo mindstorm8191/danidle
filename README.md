@@ -16,4 +16,7 @@ copper ore filter (gathered from stone)
 copper ingot (made in furnace)
 copper hammer (used for crafting many other things)
 copper shovel, pickaxe, axe
+copper bucket
+crude copper pipe (barely suitable for steam)
+copper boiler
 
