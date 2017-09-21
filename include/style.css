@@ -1,0 +1,65 @@
+/* CSS Document */
+
+.blockchoice {
+/*  position: absolute; */
+  display: inline-block;
+  padding: 3px;
+}
+
+.headerbar {
+  background-color:grey;
+  width:100%;
+  text-align:center;
+  font-size:20px;
+  padding:10px;
+}
+
+.gameblock {
+  position: absolute;
+  padding: 3px;
+}
+
+.progressbar {
+  position:absolute;
+  top:50px;
+  left:0px;
+  width:0px;
+  height:5px;
+  background-color: green;
+}
+
+.sidepanelbutton {
+  /* will include everything except color choice */
+  border: 1px solid black;
+  padding: 10px;
+  display: inline-block;
+}
+
+#gameholder {
+  width:858;
+  height:594;
+  overflow:hidden;
+}
+
+#game {
+  position:relative;
+  top:264px;
+  left:396px;
+}
+
+#gridcursor {
+  position:absolute;
+  border:3px red solid;
+  width:60px;
+  height:60px;
+  top:-100;
+  left:-100;
+  pointer-events:none;
+}
+
+#showcash {
+  padding-right:50px;
+}
+
+
+
