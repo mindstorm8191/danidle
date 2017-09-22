@@ -1,5 +1,7 @@
 # danidle
-Factory Idle style game, that doesn't yet have a name. Combine basic resources to get more advanced resources, and climb up the tech ladder
+Factory Idle style game, that doesn't yet have a name. Combine basic resources to get more advanced resources, and climb up the tech ladder.
+
+By the way, there's a running version of the game on my web space: http://bookalong.x10host.com/idlegame/  Enjoy!
 
 Currently built is up to producing 3 flint tools: shovel, pickaxe and axe.  Once you build your first flint pickaxe, stone blocks will
 unlock.
