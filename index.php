@@ -3,6 +3,16 @@
     <title>DanIdle (tentative title)</title>
     <script src="include/jquery.js" type="text/javascript"></script>
     <script src="include/blocks.js"></script>
+    <script src="include/blocks_storage.js"></script>
+    <script src="include/blocks_stickmaker.js"></script>
+    <script src="include/blocks_woodshovel.js"></script>
+    <script src="include/blocks_gravelmaker.js"></script>
+    <script src="include/blocks_flintfilter.js"></script>
+    <script src="include/blocks_flintshovel.js"></script>
+    <script src="include/blocks_flintpickaxe.ks"></script>
+    <script src="include/blocks_flintaxe.js"></script>
+    <script src="include/blocks_market.js"></script>
+    <script src="include/blocks_bucketline.js"></script>
     <link rel="stylesheet" type="text/css" href="include/style.css">
   </head>
   <body>
