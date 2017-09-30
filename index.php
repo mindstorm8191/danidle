@@ -9,10 +9,12 @@
     <script src="include/blocks_gravelmaker.js"></script>
     <script src="include/blocks_flintfilter.js"></script>
     <script src="include/blocks_flintshovel.js"></script>
-    <script src="include/blocks_flintpickaxe.ks"></script>
+    <script src="include/blocks_flintpickaxe.js"></script>
     <script src="include/blocks_flintaxe.js"></script>
     <script src="include/blocks_market.js"></script>
     <script src="include/blocks_bucketline.js"></script>
+    <script src="include/blocks_dirtmaker.js"></script>
+    <script src="include/blocks_stonemaker.js"></script>
     <link rel="stylesheet" type="text/css" href="include/style.css">
   </head>
   <body>
