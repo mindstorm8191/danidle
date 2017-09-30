@@ -35,7 +35,9 @@ var selectedblock = null; // Which block is being shown on the far right.  This 
 
 var unlocked_gravel = 0;
 var unlocked_stone = 0;
+var unlocked_dirt = 0;
 var unlocked_iron = 0;
+var unlocked_log = 0;
 
 // I would make an item class, but it seems (for now) we don't need one; we can simply use strings for everything.
 
@@ -44,11 +46,17 @@ function startup() {
   var r = new stickmaker(0,0);
   var s = new bucketline(1,0);
   var t = new market(2,0);
+  
+    // This sets up the extra chest that jumps us to the gravel phase
   var r = new storage(0,1);
   r.holds = 'woodshovel';
   r.count = 10;
   console.log(r.holds +'!');
   // Remember, use .remove() when we want to remove a game object from the html :)
+  
+  var r = new storage(-1,1);
+  r.holds = 'flintshovel';
+  r.count = 10;
   
   $(document).mousemove(function(e){
     mousex = e.pageX; mousey = e.pageY;
@@ -89,7 +97,7 @@ function drawgameblock(id, xpos, ypos, image, hasscrollbar) {
   }else{
     $("#game").append('<div id="'+ id +'" class="gameblock" style="top:'+ ypos +'px; left:'+ xpos +'px;" '+
                       'onclick="handleblockclick('+ id +')"><img id="'+ id +'img" src="'+ image +'" /></div>');
-  } 
+  }
 }
 
 class activeblock { ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -256,7 +264,10 @@ function blockaffordable(blockid) {
       if(hasinstorage('flintshovel')!=null) return 'flintshovel';
       if(hasinstorage('woodshovel')!=null) return 'woodshovel';
     break;
-    case 10: case 11: // stone producer & stone block producer
+    case 'dirtmaker':
+      if(hasinstorage('flintshovel')!=null) return 'flintshovel';
+    break;
+    case 'stonemaker': case 'stoneblockmaker': // stone producer & stone block producer
       if(hasinstorage('flintpickaxe')!=null) return 'flintpickaxe';
     break;
     default:
@@ -302,7 +313,7 @@ function workercost(blockname) {
   switch(blockname) {
     case 'storage': return 0; break;
     case 'bucketline': case 'market': case 'stickmaker': case 'woodshovel': case 'gravelmaker': case 'flintfilter': case 'flintaxe': case 'flintshovel':
-    case 'flintpickaxe':
+    case 'flintpickaxe': case 'dirtmaker': case 'stonemaker': case 'stoneblockmaker':
     return 1; break;
     default: $("#gameholder").append("Error: workercost doesnt recognize "+ blockname);
   }
@@ -367,6 +378,7 @@ function handlegameclick() {
               case "flintshovel":  var makeblock = new  flintshovel(gridx, gridy); break;
               case "flintaxe":     var makeblcok = new     flintaxe(gridx, gridy); break;
               case "flintpickaxe": var makeblock = new flintpickaxe(gridx, gridy); break;
+              case "dirtmaker":    var makeblock = new    dirtmaker(gridx, gridy); break;
               default: $("#gameholder").append('in handlegameclick(): newblock type '+ currentplacement +' not handled'); break;
             }
             selectedblock = makeblock;

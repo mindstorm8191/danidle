@@ -9,7 +9,7 @@ class storage extends activeblock { ////////////////////////////////////////////
     this.size = 10; // default storage size
     drawgameblock(this.id, this.xpos*66, this.ypos*66, "storage.png", 0);
   }
-        
+  
   acceptsinput(itemtype) {
     if(this.holds=='') return 1;
     if(this.holds==itemtype && this.count < this.size) return 1;
@@ -56,7 +56,7 @@ class storage extends activeblock { ////////////////////////////////////////////
     }
     $("#gamepanel").append('Equipment options not yet available');
   }
-        
+  
   updatepanel() {
     //$("#gamepanel").append("! ");
     if(this.holds=='') {
@@ -107,12 +107,19 @@ class storage extends activeblock { ////////////////////////////////////////////
                                  '<div id="cursorflintaxe"     class="blockchoice" onclick="setcursor(\'flintaxe\');"><img src="axe_flint.png" /></div>'+
                                  '<div id="cursorflintpickaxe" class="blockchoice" onclick="setcursor(\'flintpickaxe\');"><img src="pickaxe_flint.png" /></div>');
     }
+    if(unlocked_dirt==0 && this.holds=='flintshovel') {
+      unlocked_dirt = 1;
+      $("#blockselector").append('<div id="cursordirtmaker" class="blockchoice" onclick="setcursor(\'dirtmaker\');"><img src="dirt.png" /></div>');
+    }
     if(unlocked_stone==0 && this.holds=='flintpickaxe') {
       unlocked_stone = 1;
       $("#blockselector").append('<div id="cursorstonemaker" class="blockchoice" onclick="setcursor(\'stonemaker\');"><img src="stone.png" /></div>'+
                                  '<div id="cursorstoneblock" class="blockchoice" onclick="setcursor(\'stoneblock\');"><img src="stoneblock.png" /></div>'+
-                                 '<div id="cursorstonefurnace" class="blockchoice" onclick="setcursor(\'stonefurnace\');"><img src="furnace_stone.png" /></div>'+
-                                 '<div id="cursorlog" class="blockchoice" onclick="setcursor(\'logmaker\');"><img src="log.png" /></div>'+
+                                 '<div id="cursorstonefurnace" class="blockchoice" onclick="setcursor(\'stonefurnace\');"><img src="furnace_stone.png" /></div>');
+    }
+    if(unlocked_log==0 && this.holds=='flintaxe') {
+      unlocked_log = 1;
+      $("#blockselector").append('<div id="cursorlog" class="blockchoice" onclick="setcursor(\'logmaker\');"><img src="log.png" /></div>'+
                                  '<div id="cursorfirewood" class="blockchoice" onclick="setcursor(\'firewood\');"><img src="firewood.png" /></div>');
     }
   }
