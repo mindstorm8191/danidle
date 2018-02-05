@@ -104,8 +104,8 @@ class stonecrusher extends activeblock {
     }else{
       $("#gamepanel").append('<span id="sidepanelactivetool">'+ this.hammer.name +' ('+ (Math.floor((this.hammer.endurance / this.hammer.totalendurance)*100)) +'% health)</span><br />');
     }
-    $("#gamepanel").append('<span id="sidepaneltool" class="sidepanelbutton" style="background-color: '+ this.choosetoolcolor(this.targethammer, '') +'" onclick="selectedblock.picktool(\'\');">None</span>'+
-                           '<span id="sidepaneltoolflinthammer" class="sidepanelbutton" style="background-color: '+ this.choosetoolcolor(this.targethammer, 'flinthammer') +'" onclick="selectedblock.picktool(\'flinthammer\');">Flint Hammer</span>');
+    $("#gamepanel").append('<span id="sidepaneltool"            class="sidepanelbutton" style="background-color: '+ this.choosetoolcolor(this.targethammer, '')            +'" title="'+ this.choosetoolpopup(this.targethammer, '')            +'" onclick="selectedblock.picktool(\'\');">None</span>'+
+                           '<span id="sidepaneltoolflinthammer" class="sidepanelbutton" style="background-color: '+ this.choosetoolcolor(this.targethammer, 'flinthammer') +'" title="'+ this.choosetoolpopup(this.targethammer, 'flinthammer') +'" onclick="selectedblock.picktool(\'flinthammer\');">Flint Hammer</span>');
   }
   
   updatepanel() {
@@ -124,7 +124,9 @@ class stonecrusher extends activeblock {
   picktool(newtool) {
     this.targethammer = newtool;
     $("#sidepaneltool"           ).css("background-color", this.choosetoolcolor(this.targethammer, ''           ));
+    $("#sidepaneltool"           ).attr('title',           this.choosetoolpopup(this.targethammer, ''           ));
     $("#sidepaneltoolflinthammer").css("background-color", this.choosetoolcolor(this.targethammer, 'flinthammer'));
+    $("#sidepaneltoolflinthammer").attr('title',           this.choosetoolpopup(this.targethammer, 'flinthammer'));
   }
   
   deleteblock() {

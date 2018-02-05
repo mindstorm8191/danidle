@@ -93,9 +93,9 @@ class dirtmaker extends activeblock {
     }else{
       $("#gamepanel").append('<span id="sidepanelactivetool">'+ this.shovel.name +' ('+ (Math.floor((this.shovel.endurance / this.shovel.totalendurance)*100)) +'% health)</span><br />');
     }
-    $("#gamepanel").append('<span id="sidepanel_noshovel"    class="sidepanelbutton" style="background-color:'+ this.choosetoolcolor(this.targetshovel, 'none')        +'" onclick="selectedblock.pickshovel(\'\')"           >none</span>');
-    $("#gamepanel").append('<span id="sidepanel_woodshovel"  class="sidepanelbutton" style="background-color:'+ this.choosetoolcolor(this.targetshovel, 'woodshovel' ) +'" onclick="selectedblock.pickshovel(\'woodshovel\')" >woodshovel</span>');
-    $("#gamepanel").append('<span id="sidepanel_flintshovel" class="sidepanelbutton" style="background-color:'+ this.choosetoolcolor(this.targetshovel, 'flintshovel') +'" onclick="selectedblock.pickshovel(\'flintshovel\')">flintshovel</span>');
+    $("#gamepanel").append('<span id="sidepanel_noshovel"    class="sidepanelbutton" style="background-color:'+ this.choosetoolcolor(this.targetshovel, 'none')        +'" title="'+ this.choosetoolpopup(this.targetshovel, '')            +'" onclick="selectedblock.pickshovel(\'\')"           >none</span>');
+    $("#gamepanel").append('<span id="sidepanel_woodshovel"  class="sidepanelbutton" style="background-color:'+ this.choosetoolcolor(this.targetshovel, 'woodshovel' ) +'" title="'+ this.choosetoolpopup(this.targetweapon, 'woodshovel')  +'" onclick="selectedblock.pickshovel(\'woodshovel\')" >woodshovel</span>');
+    $("#gamepanel").append('<span id="sidepanel_flintshovel" class="sidepanelbutton" style="background-color:'+ this.choosetoolcolor(this.targetshovel, 'flintshovel') +'" title="'+ this.choosetoolpopup(this.targetweapon, 'flintshovel') +'" onclick="selectedblock.pickshovel(\'flintshovel\')">flintshovel</span>');
   }
   
   updatepanel() {
@@ -108,8 +108,11 @@ class dirtmaker extends activeblock {
       $("#sidepanelactivetool").html(this.shovel.name +' ('+ (Math.floor((this.shovel.endurance / this.shovel.totalendurance)*100)) +'% health)');
     }
     $("#sidepanel_noshovel"   ).css("background-color", this.choosetoolcolor(this.targetshovel, 'none'       ));
+    $("#sidepanel_noshovel"   ).attr('title', this.choosetoolpopup(this.targetshovel, ''));
     $("#sidepanel_woodshovel" ).css("background-color", this.choosetoolcolor(this.targetshovel, 'woodshovel' ));
+    $("#sidepanel_woodshovel" ).attr('title', this.choosetoolpopup(this.targetshovel, 'woodshovel'));
     $("#sidepanel_flintshovel").css("background-color", this.choosetoolcolor(this.targetshovel, 'flintshovel'));
+    $("#sidepanel_flintshovel").attr('title', this.choosetoolpopup(this.targetshovel, 'flintshovel'));
   }
   
   pickshovel(newshovelname) {

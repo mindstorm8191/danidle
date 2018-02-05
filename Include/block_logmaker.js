@@ -95,8 +95,8 @@ class logmaker extends activeblock {
     }else{
       $("#gamepanel").append('<span id="sidepanelactivetool">'+ this.axe.name +' ('+ (Math.floor((this.axe.endurance / this.axe.totalendurance)*100)) +'% health)</span><br />');
     }
-    $("#gamepanel").append('<span id="sidepanel_noaxe"    class="sidepanelbutton" sytle="background-color:'+ this.choosetoolcolor(this.targetaxe, 'none'    ) +'" onclick="selectedblock.pickaxe(\'\')">none</span>');
-    $("#gamepanel").append('<span id="sidepanel_flintaxe" class="sidepanelbutton" style="background-color:'+ this.choosetoolcolor(this.targetaxe, 'flintaxe') +'" onclick="selectedblock.pickaxe(\'flintaxe\')">flintaxe</span>');
+    $("#gamepanel").append('<span id="sidepanel_noaxe"    class="sidepanelbutton" sytle="background-color:'+ this.choosetoolcolor(this.targetaxe, 'none'    ) +'" title="'+ this.choosetoolpopup(this.targetaxe, '')         +'" onclick="selectedblock.pickaxe(\'\')">none</span>');
+    $("#gamepanel").append('<span id="sidepanel_flintaxe" class="sidepanelbutton" style="background-color:'+ this.choosetoolcolor(this.targetaxe, 'flintaxe') +'" title="'+ this.choosetoolpopup(this.targetaxe, 'flintaxe') +'" onclick="selectedblock.pickaxe(\'flintaxe\')">flintaxe</span>');
   }
   
   updatepanel() {
@@ -112,7 +112,9 @@ class logmaker extends activeblock {
     
     // Also update the color of the existing tool panels
     $("#sidepanel_noaxe"   ).css("background-color", this.choosetoolcolor(this.targetaxe, 'none'));
+    $("#sidepanel_noaxe"   ).attr('title', this.choosetoolpopup(this.targetaxe, ''));
     $("#sidepanel_flintaxe").css("background-color", this.choosetoolcolor(this.targetaxe, 'flintaxe'));
+    $("#sidepanel_flintaxe").attr('title', this.choosetoolpopup(this.targetaxe, 'flintaxe'));
   }
   
   pickaxe(newaxename) {
