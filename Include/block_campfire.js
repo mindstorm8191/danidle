@@ -20,6 +20,7 @@ class campfire extends activeblock {
         if(this.fuelin.length<20) return 1;
         return 0;
       case 'deaddeer': case 'deadwolf': case 'deadchicken':  // dead animals can be cooked whole
+      case 'rawdeermeat': case 'rawwolfmeat': case 'rawchickenmeat':  // A butcher shop will increase yield on meats (and cooking time)
         if(this.foodin.length<20) return 1;
         return 0;
     }
@@ -37,7 +38,7 @@ class campfire extends activeblock {
           console.log('Error in campfire->receiveitem: not enough room to accept next stick. This item has been lost');
         }
       break;
-      case 'deaddeer': case 'deadwolf': case 'deadchicken':
+      case 'deaddeer': case 'deadwolf': case 'deadchicken': case 'rawdeermeat': case 'rawwolfmeat': case 'rawchickenmeat':
         if(this.foodin.length<20) {
           this.foodin.push(item);
         }else{
@@ -101,7 +102,7 @@ class campfire extends activeblock {
       
         // Continue with cooking the food
       if(this.foodcooking==1) {
-        var result = (this.temp-50)/200.0;
+        var result = (this.temp-50)/150.0;
         if(result>1) result = 1;
         if(result<0) result = 0;
         this.counter -= result;
@@ -130,6 +131,15 @@ class campfire extends activeblock {
                 this.onhand.push(new item('wolfmeat'));
                 this.onhand.push(new item('wolfmeat'));
                 this.onhand.push(new item('wolfmeat'));
+              break;
+              case 'rawdeermeat':
+                this.onhand.push(new item('deermeat'));
+              break;
+              case 'rawwolfmeat':
+                this.onhand.push(new item('wolfmeat'));
+              break;
+              case 'rawchickenmeat':
+                this.onhand.push(new item('chickenmeat'));
               break;
             }
           }
@@ -199,6 +209,11 @@ class campfire extends activeblock {
       case 'deaddeer': return 100;
       case 'deadwolf': return 70;
       case 'deadchicken': return 50;
+      case 'rawdeermeat': return 10;  // The butchered meats will all be relatively the same size, so have the same cooking time.  These may seem short, but
+      case 'rawwolfmeat': return 10;  // it will help support larger populations
+      case 'rawchickenmeat': return 10;
     }
   }
 }
+
+

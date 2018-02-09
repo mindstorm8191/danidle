@@ -105,8 +105,7 @@ class woodcupmaker extends activeblock {
     }else{
       $("#gamepanel").append('<span id="sidepanelactivetool">'+ this.axe.name +' ('+ (Math.floor((this.axe.endurance / this.axe.totalendurance)*100)) +'% health)</span><br />');
     }
-    $("#gamepanel").append('<span id="sidepanel_noaxe"    class="sidepanelbutton" sytle="background-color:'+ this.choosetoolcolor(this.targetaxe, 'none'    ) +'" onclick="selectedblock.pickaxe(\'\')">none</span>');
-    $("#gamepanel").append('<span id="sidepanel_flintaxe" class="sidepanelbutton" style="background-color:'+ this.choosetoolcolor(this.targetaxe, 'flintaxe') +'" onclick="selectedblock.pickaxe(\'flintaxe\')">flintaxe</span>');
+    this.displaytoollist(this.targetaxe, ['flintaxe']);
   }
   
   updatepanel() {
@@ -119,8 +118,7 @@ class woodcupmaker extends activeblock {
     }else{
       $("#sidepanelactivetool").html(this.axe.name +' ('+ (Math.floor((this.axe.endurance / this.axe.totalendurance)*100)) +'% health)');
     }
-    $("#sidepanel_noaxe"   ).css("background-color", this.choosetoolcolor(this.targetaxe, 'none'));
-    $("#sidepanel_flintaxe").css("background-color", this.choosetoolcolor(this.targetaxe, 'flintaxe'));
+    this.updatetoollist(this.targetaxe, ['flintaxe']);
   }
   
   pickaxe(newaxename) {
@@ -141,7 +139,6 @@ class woodcupmaker extends activeblock {
     
     super.deleteblock();
   }
-
 }
 
 

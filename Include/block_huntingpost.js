@@ -96,8 +96,7 @@ class huntingpost extends activeblock {
     }else{
       $("#gamepanel").append('<span id="sidepanelactivetool">'+ this.weapon.name +' ('+ (Math.floor((this.weapon.endurance / this.weapon.totalendurance)*100)) +'% health)</span><br/>');
     }
-    $("#gamepanel").append('<span id="sidepaneltool"               class="sidepanelbutton" style="background-color: '+ this.choosetoolcolor(this.targetweapon, '')               +'" title="'+ this.choosetoolpopup(this.targetweapon, '')               +'" onclick="selectedblock.pickweapon(\'\');">None</span>'+
-                           '<span id="sidepaneltoolwoodpointspear" class="sidepanelbutton" style="background-color: '+ this.choosetoolcolor(this.targetweapon, 'woodpointspear') +'" title="'+ this.choosetoolpopup(this.targetweapon, 'woodpointspear') +'" onclick="selectedblock.pickweapon(\'woodpointspear\');">Wood Point Spear</span>');
+    this.displaytoollist(this.weapon, ['woodpointspear']);
   }
   
   updatepanel() {
@@ -109,14 +108,10 @@ class huntingpost extends activeblock {
     }else{
       $("#sidepanelactivetool").html(this.weapon.name +' ('+ (Math.floor((this.weapon.endurance / this.weapon.totalendurance)*100)) +'% health)');
     }
-    
-    $("#sidepaneltool"              ).css('background-color', this.choosetoolcolor(this.targetweapon, ''));
-    $("#sidepaneltool"              ).attr('title', this.choosetoolpopup(this.targetweapon, ''));
-    $("#sidepaneltoolwoodpointspear").css('background-color', this.choosetoolcolor(this.targetweapon, 'woodpointspear'));
-    $("#sidepaneltoolwoodpointspear").attr('title', this.choosetoolpopup(this.targetweapon, 'woodpointspear'));
+    this.updatetoollist(this.targetweapon, ['woodpointspear']);
   }
   
-  pickweapon(newweapon) {
+  picktool(newweapon) {
     this.targetweapon = newweapon;
     $("#sidepaneltool"              ).css('background-color', this.choosetoolcolor(this.targetweapon, ''));
     $("#sidepaneltoolwoodpointspear").css('background-color', this.choosetoolcolor(this.targetweapon, 'woodpointspear'));

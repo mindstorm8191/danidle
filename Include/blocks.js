@@ -86,7 +86,7 @@ class activeblock {
     // targetslot - which tool is currently loaded in the target slot
     // toolname - which tool this div block is for
     
-    if(toolname=='none') {
+    if(toolname=='none' || toolname=='') {
       if(targetslot=='') {
         return 'green';  // active in use... always available
       }else{
@@ -104,6 +104,28 @@ class activeblock {
           return 'orange'; // active in use, but no more are available
         }else{
           return 'red'; // not in use; none are available
+    } } }
+  }
+  
+  choosetoolpopup(targetslot, toolname) {
+    if(toolname=='none' || toolname=='') {
+      if(targetslot=='') {
+        return 'Active';  // active in use... always available
+      }else{
+        return 'Not Active';  // not active, but always available
+      }
+    }else{
+      if(blocklist.findinstorage(toolname, 0)==1) {
+        if(targetslot==toolname) {
+          return 'Active - More Available';  // active in use, with more available
+        }else{
+          return 'Not Active - More Available';  // not active, but available
+        }
+      }else{
+        if(targetslot==toolname) {
+          return 'Active - Last One!'; // active in use, but no more are available
+        }else{
+          return 'None Available'; // not in use; none are available
     } } }
   }
   
@@ -126,8 +148,27 @@ class activeblock {
     
     this.priority = Math.max(0, this.priority+direction);
     $("#sidepanelpriority").html(this.priority);
-    console.log('Sorting...');
     blocklist.sort(blocklist.compare);
+  }
+  
+  displaytoollist(targettool, toolslist) {
+    // Handles showing all tool options for a given tool role
+    // targettool: which tool slot will get filled by this
+    // toolslist: array of tool names to include.  The option 'none' will automatically be included
+    
+    $("#gamepanel").append('<span id="sidepaneltool" class="sidepanelbutton" style="background-color: '+ this.choosetoolcolor(targettool, '') +'" title="'+ this.choosetoolpopup(targettool, '') +'" onclick="selectedblock.picktool(\'\');">None</span>');
+    for(var i=0; i<toolslist.length; i++) {
+      $("#gamepanel").append('<span id="sidepaneltool'+ toolslist[i] +'" class="sidepanelbutton" style="background-color: '+ this.choosetoolcolor(targettool, toolslist[i]) +'" title="'+ this.choosetoolpopup(targettool, toolslist[i]) +'" onclick="selectedblock.picktool(\''+ toolslist[i] +'\');">'+ toolslist[i] +'</span>');
+    }
+  }
+  
+  updatetoollist(targettool, toolslist) {
+    $("#sidepaneltool").css('background-color', this.choosetoolcolor(targettool, ''));
+    $("#sidepaneltool").attr('title', this.choosetoolpopup(targettool, ''));
+    for(var i=0; i<toolslist.length; i++) {
+      $("#sidepaneltool"+ toolslist[i]).css('background-color', this.choosetoolcolor(targettool, toolslist[i]));
+      $("#sidepaneltool"+ toolslist[i]).attr('title', this.choosetoolpopup(targettool, toolslist[i]));
+    }
   }
 }
 
