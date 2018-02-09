@@ -67,7 +67,7 @@ class woodpointspear extends activeblock {
           workpoints--;
           if(this.counter>10) {
             this.counter-=10;
-            this.onhand.push(new item('woodpointspear', 'spear', 30, 1));
+            this.onhand.push();
             this.stick.splice(0,1); // delete the item from input
             findunlocks('woodpointspear');
           }

@@ -93,7 +93,7 @@ class foragepost extends activeblock {
                          'Priority: <img src="img/arrowleft.png" onclick="selectedblock.setpriority(-1)"> '+
                          '<span id="sidepanelpriority">'+ this.priority +'</span> '+
                          '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)"><br />'+
-                         'Progress: <span id="sidepanelprogress">'+ Math.floor((this.counter/30.0)*100) +'</span><br />'+
+                         'Progress: <span id="sidepanelprogress">'+ Math.floor((this.counter/30.0)*100) +'</span>%<br />'+
                          'Food on hand: <span id="sidepanelstock">'+ this.onhand.length +'</span>');
   }
   

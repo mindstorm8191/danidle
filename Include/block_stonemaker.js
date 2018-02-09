@@ -88,8 +88,7 @@ class stonemaker extends activeblock {
     }else{
       $("#gamepanel").append('<span id="sidepanelactivetool">'+ this.pickaxe.name +' ('+ (Math.floor((this.pickaxe.endurance / this.pickaxe.totalendurance)*100)) +'% health)</span><br />');
     }
-    $("#gamepanel").append('<span id="sidepaneltool"             class="sidepanelbutton" style="background-color: '+ this.choosetoolcolor(this.targetpickaxe, '')             +'" title="'+ this.choosetoolpopup(this.targetpickaxe, '')             +'" onclick="selectedblock.picktool(\'\');">None</span>'+
-                           '<span id="sidepaneltoolflintpickaxe" class="sidepanelbutton" style="background-color: '+ this.choosetoolcolor(this.targetpickaxe, 'flintpickaxe') +'" title="'+ this.choosetoolpopup(this.targetpickaxe, 'flintpickaxe') +'" onclick="selectedblock.picktool(\'flintpickaxe\');">Flint Pickaxe</span>');
+    this.displaytoollist(this.targetpickaxe, ['flintpickaxe']);
   }
   
   updatepanel() {
@@ -101,10 +100,7 @@ class stonemaker extends activeblock {
       $("#sidepanelactivetool").html(this.pickaxe.name +' ('+ (Math.floor((this.pickaxe.endurance / this.pickaxe.totalendurance)*100)) +'% health)');
     }
       // Also update the tool list, since the status of the tools can change at any time
-    $("#sidepaneltool"            ).css("background-color", this.choosetoolcolor(this.targetpickaxe, ''            ));
-    $("#sidepaneltool"            ).attr('title',           this.choosetoolpopup(this.targetpickaxe, ''            ));
-    $("#sidepaneltoolflintpickaxe").css("background-color", this.choosetoolcolor(this.targetpickaxe, 'flintpickaxe'));
-    $("#sidepaneltoolflintpickaxe").attr('title',           this.choosetoolpopup(this.targetpickaxe, 'flintpickaxe'));
+    this.updatetoollist(this.targetpickaxe, ['flintpickaxe']);
   }
   
   picktool(newtool) {

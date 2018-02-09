@@ -88,9 +88,7 @@ class gravelmaker extends activeblock {
       $("#gamepanel").append('<span id="sidepanelactivetool">'+ this.shovel.name +' ('+ (Math.floor((this.shovel.endurance / this.shovel.totalendurance)*100)) +'% health)</span><br />');
     }
     // These spans will be colored based on the status of the tools available
-    $("#gamepanel").append('<span id="sidepanel_noshovel"    class="sidepanelbutton" style="background-color:'+ this.choosetoolcolor(this.targetshovel, '')            +'" title="'+ this.choosetoolpopup(this.targetshovel, '')            +'" onclick="selectedblock.pickshovel(\'\')"           >none</span>');
-    $("#gamepanel").append('<span id="sidepanel_woodshovel"  class="sidepanelbutton" style="background-color:'+ this.choosetoolcolor(this.targetshovel, 'woodshovel' ) +'" title="'+ this.choosetoolpopup(this.targetshovel, 'woodshovel')  +'" onclick="selectedblock.pickshovel(\'woodshovel\')" >woodshovel</span>');
-    $("#gamepanel").append('<span id="sidepanel_flintshovel" class="sidepanelbutton" style="background-color:'+ this.choosetoolcolor(this.targetshovel, 'flintshovel') +'" title="'+ this.choosetoolpopup(this.targetshovel, 'flintshovel') +'" onclick="selectedblock.pickshovel(\'flintshovel\')">flintshovel</span>');
+    this.displaytoollist(this.targetshovel, ['woodshovel', 'flintshovel']);
   }
   
   
@@ -107,15 +105,10 @@ class gravelmaker extends activeblock {
     }
     
       // We also need to update the colors of the existing panels, as the status of these can change at any point
-    $("#sidepanel_noshovel"   ).css("background-color", this.choosetoolcolor(this.targetshovel, 'none'       ));
-    $("#sidepanel_noshovel"   ).attr('title', this.choosetoolpopup(this.targetshovel, ''));
-    $("#sidepanel_woodshovel" ).css("background-color", this.choosetoolcolor(this.targetshovel, 'woodshovel' ));
-    $("#sidepanel_woodshovel" ).attr('title', this.choosetoolpopup(this.targetshovel, 'woodshovel'));
-    $("#sidepanel_flintshovel").css("background-color", this.choosetoolcolor(this.targetshovel, 'flintshovel'));
-    $("#sidepanel_flintshovel").attr('title', this.choosetoolpopup(this.targetshovel, 'flintshovel'));
+    this.updatetoollist(this.targetshovel, ['woodshovel', 'flintshovel']);
   }
   
-  pickshovel(newshovelname) {
+  picktool(newshovelname) {
     // (not an activeblock function) Changes the tool that is selected to what the user picked.
     
     this.targetshovel = newshovelname;
