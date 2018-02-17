@@ -55,6 +55,14 @@ class huntingpost extends activeblock {
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
     
+    // raw animals can't be eaten, but they will decay nonetheless, each at the same rate
+    for(var i=0; i<this.onhand.length; i++) {
+      this.onhand[i].lifetime--;
+      if(this.onhand[i].lifetime<=0) {
+        this.onhand.splice(i,0);
+        i--;
+    } }
+    
     if(this.weapon!=null) {
       if(this.onhand.length<10) {
         if(workpoints>=1) {
@@ -66,11 +74,15 @@ class huntingpost extends activeblock {
           }
           if(this.counter>=30) {
             this.counter-=30;
+            var newcatch = null;
             switch(Math.floor(Math.random()*3)) {
-              case 0: this.onhand.push(new item('deaddeer')); break;
-              case 1: this.onhand.push(new item('deadchicken')); break;
-              case 2: this.onhand.push(new item('deadwolf')); break;
-          } }
+              case 0: newcatch = new item('deaddeer'); break;
+              case 1: newcatch = new item('deadchicken'); break;
+              case 2: newcatch = new item('deadwolf'); break;
+            }
+            newcatch.lifetime = 300; // aka 5 minutes
+            this.onhand.push(newcatch);
+          }
           $("#"+ this.id +"progress").css({"width":(this.counter*2)});  // aka 60/30
       } }
     }else{
@@ -87,7 +99,7 @@ class huntingpost extends activeblock {
                          'Priority: <img src="img/arrowleft.png" onclick="selectedblock.setpriority(-1)"> '+
                          '<span id="sidepanelpriority">'+ this.priority +'</span> '+
                          '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)"><br />'+
-                         'Progress: <span id="sidepanelprogress">'+ Math.floor((this.counter/30.0)*100) +'</span><br />'+
+                         'Progress: <span id="sidepanelprogress">'+ Math.floor((this.counter/30.0)*100) +'</span>%<br />'+
                          'Items on hand: <span id="sidepanelstock">'+ this.onhand.length +'</span><br />'+
                          '<a href="#" onclick="selectedblock.deleteblock()">Delete Block</a><br /><br />'+
                          'Tool selection:<br /><b>Weapon</b><br />');

@@ -23,30 +23,31 @@ class foragepost extends activeblock {
     //             which will ask nearby items what it also provides, and to avoid infinite loops in its search
     // return type is an array of item names
     
-    return ['apple', 'treenut', 'berry', 'mushroom'];
+    //return ['apple', 'treenut', 'berry', 'mushroom'];
+    return [];
   }
 
   nextoutput() {
     // activeblock function that returns the name of the next item to be output. if none is available, return ''.
     
-    if(this.onhand.length!=0) {
-      return this.onhand[0].name;
-    }
+//    if(this.onhand.length!=0) {
+//      return this.onhand[0].name;
+//    }
     return '';
   }
 
-  outputitem() {
+//  outputitem() {
     // activeblock function that returns the actual item to be collected by the calling block.  Be sure to delete access to the item while doing this
     // This code below is generally all that's needed to manage this
     
-    if(this.onhand.length>0) {
-      var grab = this.onhand[0];
-      this.onhand.splice(0,1);
-      return grab;
-    }else{
-      return null;
-    }
-  }
+//    if(this.onhand.length>0) {
+//      var grab = this.onhand[0];
+//      this.onhand.splice(0,1);
+//      return grab;
+//    }else{
+//      return null;
+//    }
+//  }
 
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
@@ -69,7 +70,7 @@ class foragepost extends activeblock {
       if(workpoints>=1) {
         workpoints--;
         this.counter++;  // there won't be any tools for this block to change the collection speed
-        if(this.counter>30) {
+        if(this.counter>=30) {
           this.counter=0;
           var food = null;
           switch(Math.floor(Math.random()*4)) {
@@ -78,6 +79,8 @@ class foragepost extends activeblock {
             case 2: food = new item('berry'); food.lifetime = 6000; break; // aka 100 minutes
             case 3: food = new item('mushroom'); food.lifetime = 7500; break; // aka 125 minutes
           }
+          food.location = this.id
+          foodlist.push(food);
           this.onhand.push(food);
       } }
       // Now manipulate the progress bar

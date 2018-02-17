@@ -9,6 +9,7 @@ class campfire extends activeblock {
     this.foodcooking = 0; // Set to 1 if food is on the fire and is being cooked
     this.fuelburn = 0;  // how long the current fuel has left to burn
     this.temp = 0;      // how hot the fire is at any given time
+    this.outputfood = 0; // toggles whether food is output or not
     this.drawgameblock('img/campfire.png', 1); // use 1 to include a scroll bar, or 0 to exclude that
   }
   
@@ -56,15 +57,19 @@ class campfire extends activeblock {
     //             which will ask nearby items what it also provides, and to avoid infinite loops in its search
     // return type is an array of item names
     
-    return ['dearmeat', 'wolfmeat', 'chickenmeat', 'ash'];
+    if(this.outputfood==0) {
+      return ['ash'];
+    }else{
+      return ['dearmeat', 'wolfmeat', 'chickenmeat', 'ash'];
+    }
   }
 
   nextoutput() {
     // activeblock function that returns the name of the next item to be output. if none is available, return ''.
-    
-    if(this.onhand.length!=0) {
-      return this.onhand[0].name;
-    }
+    if(this.outputfood!=0) {
+      if(this.onhand.length!=0) {
+        return this.onhand[0].name;
+    } }
     return '';
   }
 
@@ -72,10 +77,14 @@ class campfire extends activeblock {
     // activeblock function that returns the actual item to be collected by the calling block.  Be sure to delete access to the item while doing this
     // This code below is generally all that's needed to manage this
     
-    if(this.onhand.length>0) {
-      var grab = this.onhand[0];
-      this.onhand.splice(0,1);
-      return grab;
+    if(this.outputfood!=0) {
+      if(this.onhand.length>0) {
+        var grab = this.onhand[0];
+        this.onhand.splice(0,1);
+        return grab;
+      }else{
+        return null;
+      }
     }else{
       return null;
     }
@@ -90,13 +99,32 @@ class campfire extends activeblock {
     // will cook, up until the fire reaches a temp of 200.  Temperatures above 200 will not worsen the cook rate, aka the food will be held further away from the heat.
     // Generally, fires will try to reach a temp of 200, and hover around there.
     
+      // update the lifetimes of all current input items. We need to manage additional changes if the currently-cooking item expires
+    if(this.foodin.length>0) {
+      this.foodin[0].lifetime--;
+      if(this.foodin[0].lifetime<=0) {
+        this.foodin.splice(0,1);
+        this.counter = 0;
+        this.foodcooking = 0;
+        for(var i=0;i<this.foodin.length;i++) { // we'll have to do this here, since if one item is deleted, the below loop will skip an item
+          this.foodin[i].lifetime--;
+          if(this.foodin[i].lifetime<=0) {
+            this.foodin.splice(i,1);
+        } }
+      }else{
+        for(var i=1;i<this.foodin.length;i++) { // we'll have to do this here, since if one item is deleted, the below loop will skip an item
+          this.foodin[i].lifetime--;
+          if(this.foodin[i].lifetime<=0) {
+            this.foodin.splice(i,1);
+    } } } }
+    
     if(this.fuelburn>0) {  // this fire is heating up
       this.temp += 5;
       this.fuelburn--;
     }else{
       this.temp = Math.max(this.temp-2, 0);
     }
-    if(this.foodin.length>0 && this.fuelin.length>0) {  // There is work to be done here!
+    if(this.foodin.length>0 && this.fuelin.length>0 && this.onhand.length<20) {  // There is work to be done here!
       // First, see if there is food to be removed.  We will use the counter in a count-down setup.  Food may stay on a campfire for a little while longer than the target
       // cook time, but leaving it on too long will result in unuseable food.
       
@@ -116,30 +144,30 @@ class campfire extends activeblock {
           if(this.counter>-30) { // make sure this food isn't burnt
             switch(this.foodin[0].name) {
               case 'deaddeer':  // deer meat. provides the most amount of food. In this form it provides a little less meat than if it were butchered before cooking
-                this.onhand.push(new item('deermeat'));
-                this.onhand.push(new item('deermeat'));
-                this.onhand.push(new item('deermeat'));
-                this.onhand.push(new item('deermeat'));
-                this.onhand.push(new item('deermeat'));
-                this.onhand.push(new item('deermeat'));
+                var food = new item('deermeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);  // 600 = 10 minutes
+                var food = new item('deermeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);
+                var food = new item('deermeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);
+                var food = new item('deermeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);
+                var food = new item('deermeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);
+                var food = new item('deermeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);
               break;
               case 'deadchicken':  // chicken meat. Small animal, but still provides a good deal of food
-                this.onhand.push(new item('chickenmeat'));
-                this.onhand.push(new item('chickenmeat'));
+                var food = new item('chickenmeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);
+                var food = new item('chickenmeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);
               break;
               case 'deadwolf':  // wolf meat. A little larger than a chicken
-                this.onhand.push(new item('wolfmeat'));
-                this.onhand.push(new item('wolfmeat'));
-                this.onhand.push(new item('wolfmeat'));
+                var food = new item('wolfmeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);
+                var food = new item('wolfmeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);
+                var food = new item('wolfmeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);
               break;
               case 'rawdeermeat':
-                this.onhand.push(new item('deermeat'));
+                var food = new item('deermeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);
               break;
               case 'rawwolfmeat':
-                this.onhand.push(new item('wolfmeat'));
+                var food = new item('wolfmeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);
               break;
               case 'rawchickenmeat':
-                this.onhand.push(new item('chickenmeat'));
+                var food = new item('chickenmeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);
               break;
             }
           }
@@ -185,6 +213,7 @@ class campfire extends activeblock {
     $("#gamepanel").append('Firewood on hand: <span id="sidepanelfuel">'+ this.fuelin.length +'</span><br />'+
                            'Raw food on hand: <span id="sidepanelfood">'+ this.foodin.length +'</span><br />'+
                            'Cooked food ready: <span id="sidepanelcooked">'+ this.onhand.length +'</span><br />'+
+                           '<span id="sidepaneltoggleoutput" class="sidepanelbutton" style="background-color:'+ this.outputtogglecolor() +'" onclick="selectedblock.toggleoutput()">Output Foods</span><br />'+
                            '<a href="#" onclick="selectedblock.deleteblock()">Delete Block</a><br /><br />');
   }
   
@@ -213,6 +242,19 @@ class campfire extends activeblock {
       case 'rawwolfmeat': return 10;  // it will help support larger populations
       case 'rawchickenmeat': return 10;
     }
+  }
+  
+  toggleoutput() {
+    this.outputfood = 1 - this.outputfood;
+    $("#sidepaneltoggleoutput").css('background-color', this.outputtogglecolor());
+  }
+  
+  outputtogglecolor() {
+    // returns the color that the output toggle should be
+    if(this.outputfood==1) {
+      return 'green';
+    }
+    return 'red';
   }
 }
 
