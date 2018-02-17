@@ -11,13 +11,13 @@
   // Add buttons to the foraging post to decide if non-food things will be collected (such as seeds or flowers)
   
   // total project # of lines
-  // index                   block_firewood        block_gravelmaker      block_storage
-  //     blocks                  block_flintfilter     block_logmaker         block_watercup
-  //         block_bucketline        block_flinttoolmaker  block_mudmaker        block_woodcupmaker
-  //             block_claydryer         block_foragepost      block_stickmaker      block_woodshovel
-  //                 block_clayformmaker    block_furnace         block_stonecrusher
-  //                     block_dirtmaker        block_garbage         block_stonemaker
-  // 316+131+177+119+202+130+149+150+204+87+195+76+131+134+117+68+140+125+126+88+142+103 = 3110 lines!
+  // index                   block_clayformmaker     block_furnace          block_mudmaker     block_storage
+  //     blocks                  block_dirtmaker         block_garbage          block_postmaker        block_twinemaker
+  //         block_bucketline        block_firewood         block_gravelmaker       block_stickmaker       block_watercup
+  //             block_butchershop       block_flintfilter      block_huntingpost      block_stonecrusher     block_woodcupmaker
+  //                 block_campfire          block_flinttoolmaker   block_logmaker         block_stonefilter      block_woodpointspear
+  //                     block_claydryer         block_foragepost       block_minerspost       block_stonemaker      block_woodshovel
+  // 315+173+180+184+217+120+205+129+150+147+251+105+195+80+130+119+135+156+120+149+68+140+181+126+126+125+91+142+98+106 = 4463 lines!
   
   // Population control - Determines how many human units on hand you have to manage
   // Factors affecting population
@@ -50,6 +50,8 @@
     <script src="include/block_gravelmaker.js"    type="text/javascript"></script>
     <script src="include/block_flintfilter.js"    type="text/javascript"></script>
     <script src="include/block_flinttoolmaker.js" type="text/javascript"></script>
+    <script src="include/block_twinemaker.js"     type="text/javascript"></script>
+    <script src="include/block_butchershop.js"    type="text/javascript"></script>
     <script src="include/block_logmaker.js"       type="text/javascript"></script>
     <script src="include/block_firewood.js"       type="text/javascript"></script>
     <script src="include/block_dirtmaker.js"      type="text/javascript"></script>
@@ -61,12 +63,16 @@
     <script src="include/block_furnace.js"        type="text/javascript"></script>
     <script src="include/block_stonemaker.js"     type="text/javascript"></script>
     <script src="include/block_stonecrusher.js"   type="text/javascript"></script>
+    <script src="include/block_postmaker.js"      type="text/javascript"></script>
+    <script src="include/block_minerspost.js"     type="text/javascript"></script>
     <link rel="stylesheet" type="text/css" href="include/style.css" />
   </head>
   <body>
     <table width="100%">
       <tr>
         <td style="width:208px;" valign="top">
+          Idle: <span id="showpopulation">3/4</span> Food: <span id="showfood">0</span><br />
+          Lvngqtr: <span id="showlivingspace">0</span> Clthng: <span id="showclothing">0</span><br /> 
           Factory Components:<br />
           Currently Selected: <span id="selectedblock">Delete Tool"</span>
           <div id="blockselector" style="position:relative">
@@ -79,7 +85,7 @@
             <div id="cursorwoodpointspear" class="blockchoice" onclick="setcursor('woodpointspear')" title="Wood-point spear maker; Make spears for hunting"><img src="img/woodpointspear.png" /></div>
           </div>
         </td>
-        <td width="66%" valign="top" style="background-image:url(img/gridbackground.png);">
+        <td width="66%" valign="top" style="background-image:url(img/grass.png);">
           <div id="gameholder" onclick="handlegameboxclick()">
             <div id="game">
               <div id="gridcursor"></div>
@@ -96,6 +102,8 @@
       var mousex = 0, mousey = 0;
       var panellist = [];
       var lastblockid = 0;
+      var foodconsumertimer = 35; // We'll start with a 5-tick gap so the forage post won't miss something
+      var foodlist = [];  // list of food items that are stored
       
       var population = 4; // number of colonists in the colony.  This determines how much work can be done per 'tick'
       var workpoints = 0; // number of work points is directly affected by population, but is reset at the start of every cycle.  This is global so that all blocks
@@ -177,6 +185,7 @@
           if(target==null) {
             switch(cursorselect) {
               case 'bucketline':     var makeblock = new bucketline(    gridx, gridy); break;
+              case 'butchershop':    var makeblock = new butchershop(   gridx, gridy); break;
               case 'campfire':       var makeblock = new campfire(      gridx, gridy); break;
               case 'claydryer':      var makeblock = new claydryer(     gridx, gridy); break;
               case 'clayformmaker':  var makeblock = new clayformmaker( gridx, gridy); break;
@@ -190,11 +199,14 @@
               case 'gravelmaker':    var makeblock = new gravelmaker(   gridx, gridy); break;
               case 'huntingpost':    var makeblock = new huntingpost(   gridx, gridy); break;
               case 'logmaker':       var makeblock = new logmaker(      gridx, gridy); break;
-              case 'mudmaker':       var makeblock = new mudmaker(      gridx, gridy); break; 
+              case 'minerspost':     var makeblock = new minerspost(    gridx, gridy); break;
+              case 'mudmaker':       var makeblock = new mudmaker(      gridx, gridy); break;
+              case 'postmaker':      var makeblock = new postmaker(     gridx, gridy); break; 
               case 'stickmaker':     var makeblock = new stickmaker(    gridx, gridy); break;
               case 'stonecrusher':   var makeblock = new stonecrusher(  gridx, gridy); break;
               case 'stonemaker':     var makeblock = new stonemaker(    gridx, gridy); break;
               case 'storage':        var makeblock = new storage(       gridx, gridy); break;
+              case 'twinemaker':     var makeblock = new twinemaker(    gridx, gridy); break;
               case 'watercup':       var makeblock = new watercup(      gridx, gridy); break;
               case 'woodcupmaker':   var makeblock = new woodcupmaker(  gridx, gridy); break;
               case 'woodpointspear': var makeblock = new woodpointspear(gridx, gridy); break;
@@ -211,6 +223,36 @@
       
       $(document).ready(function() {
         mytimer = setInterval(function() {
+          // The first thing to do is to update the food counter.  When it hits zero, we will need to find some food to consume (hopefully picked at random, but for now
+          // we'll just pick whatever we can find)
+          foodconsumertimer--;
+          if(foodconsumertimer<=0) {
+            if(foodlist.length>0) {
+              var target = Math.floor(Math.random()*foodlist.length);  // removing the item from the food list doesn't automatically make the item go away.  We need to remove
+              // it from where it's stored on the map, too.
+              var storedblock = blocklist.findbyid(foodlist[target].location);
+              storedblock.onhand.splice(storedblock.onhand.indexOf(foodlist[target]), 1);  // splice out the item from the onhand array of the item's current location 
+              foodlist.splice(target, 1);
+                // With the last food item consumed, lets determine if we can increase population
+              if(foodlist.length > population*2) {
+                population++;
+              }
+            }else{
+              console.log('You have run out of food!');
+              population--;  // population reduces so that others have a better chance to get food
+            }
+            foodconsumertimer += 120 / population;
+            //console.log('Foodconsumertimer='+ foodconsumertimer);
+          }
+          console.log('Foodconsumertimer='+ foodconsumertimer);
+          // Also update the lifetime of all foods we have stored
+          for(var i=0; i<foodlist.length; i++) {
+            foodlist[i].lifetime--;
+            if(foodlist[i].lifetime<=0) {
+              foodlist.splice(i,1);
+            }
+          }
+          
           workpoints = population;
           blocklist.forEach((block) => {
             if(block!=null) {
@@ -221,10 +263,15 @@
           if(selectedblock!=null) {
             selectedblock.updatepanel();
           }
+          
+          // With everything handled, now update the globally displayed variables
+          $("#showpopulation").html(workpoints +'/'+ population);
+          $("#showfood").html(foodlist.length);
+          // oh - the rest we don't even have production of yet.
         }, 1000);
         
         
-        var r = new stickmaker(0,0);
+        var r = new foragepost(0,0);
         
         var x = new panel('gravelmaker',   'img/gravel.png',        'woodshovel', 'Gravel Maker; Collects gravel. Requires a shovel');
         var x = new panel('flintfilter',   'img/filter_flint.png',  'woodshovel', 'Flint Filter; Filters flint from raw gravel. Requires a shovel');
@@ -234,53 +281,22 @@
         var x = new panel('logmaker',      'img/log.png',           'flintaxe', 'Log Maker; Collects logs. Requires an axe');
         var x = new panel('firewood',      'img/firewood.png',      'flintaxe', 'Firewood Maker; Turns logs into firewood. Requires an axe');
         var x = new panel('woodcupmaker',  'img/cup.png',           'flintaxe', 'Wooden cup maker; Turns logs into cups. Requires an axe');
+        var x = new panel('postmaker',     'img/postmaker.png',     'flintaxe', 'Wooden post maker, made from logs. Requires an axe');
         var x = new panel('furnace',       'img/furnace.png',       'flintaxe', 'Furnace; Fires things. Requires unfired dirt bricks, then firewood');
         var x = new panel('watercup',      'img/watercup.png',      'woodencup', 'Water Cup; Fills wooden cups with water');
         var x = new panel('mudmaker',      'img/mudmaker.png',      'woodencup', 'Mud Maker; Produces mud. Requires dirt & water');
         var x = new panel('clayformmaker', 'img/clayformmaker.png', 'woodencup', 'Clay From-maker; shapes mud into shapes');
         var x = new panel('claydryer',     'img/claydryer.png',     'woodencup', 'Clay Dryer; Dries clay before being fired');
         var x = new panel('stonemaker',    'img/stone.png',         'flintpickaxe', 'Stone Collector; Requires a pickaxe');
-        var x = new panel('stonecrusher',  'img/stonecrusher.png',  'flintpickaxe', 'Stone Crusher; Crushes stone so ores can be extracted. Requires hammer');
-        var x = new panel('huntingpost',   'img/huntingpost.png',   'woodpointspear', 'Hunting Post; collect meats from environment. Requires weapons');
-        var x = new panel('campfire',      'img/campfire.png',      'woodpointspear', 'Campfire; cook foods collected from hunting'); 
+        var x = new panel('minerspost',    'img/minerspost.png',    'flintpickaxe', 'Miners Post; dig deep to find raw metals. Needs a pickaxe, posts, torches & twine');
+        var x = new panel('stonecrusher',  'img/stonecrusher.png',  'flintpickaxe', 'Stone Crusher; Crushes stone so ores can be extracted. Requires a hammer');
+        var x = new panel('huntingpost',   'img/huntingpost.png',   'woodpointspear', 'Hunting Post; collect meats from environment. Requires a weapon');
+        var x = new panel('campfire',      'img/campfire.png',      'woodpointspear', 'Campfire; cook foods collected from hunting. Uses sticks as fuel');
+        var x = new panel('twinemaker',    'img/twinemaker.png',    'flintknife', 'Twine Maker; produces twine from wood bark. Requires a knife');
+        var x = new panel('butchershop',   'img/butcher.png',       'flintknife', 'Butcher shop; cuts meats before cooking. Requires a knife'); 
 
 //        This code is here for testing purposes only - it allows me to jump ahead so I'm not spending 5 minutes every time I want to test something new
-/*        var r = new storage(-1,0);
-        r.onhand.push(new item('flintaxe', 'axe', 200, 1));
-        r.onhand.push(new item('flintaxe', 'axe', 200, 1));
-        r.onhand.push(new item('flintaxe', 'axe', 200, 1));
-        r.onhand.push(new item('flintaxe', 'axe', 200, 1));
-        r.onhand.push(new item('flintaxe', 'axe', 200, 1));
-        r.onhand.push(new item('flintaxe', 'axe', 200, 1));
-        r.onhand.push(new item('flintaxe', 'axe', 200, 1));
-        r.onhand.push(new item('flintaxe', 'axe', 200, 1));
-        var r = new storage(-2,0);
-        r.onhand.push(new item('flintshovel', 'shovel', 200, 1.25));
-        r.onhand.push(new item('flintshovel', 'shovel', 200, 1.25));
-        r.onhand.push(new item('flintshovel', 'shovel', 200, 1.25));
-        r.onhand.push(new item('flintshovel', 'shovel', 200, 1.25));
-        r.onhand.push(new item('flintshovel', 'shovel', 200, 1.25));
-        r.onhand.push(new item('flintshovel', 'shovel', 200, 1.25));
-        r.onhand.push(new item('flintshovel', 'shovel', 200, 1.25));
-        findunlocks('woodshovel');
-        findunlocks('flintaxe');
-        findunlocks('woodencup');
-
-        var r = new storage(-1,0);
-        r.onhand.push(new item('flintpickaxe', 'pickaxe', 200, 1));
-        r.onhand.push(new item('flintpickaxe', 'pickaxe', 200, 1));
-        r.onhand.push(new item('flintpickaxe', 'pickaxe', 200, 1));
-        r.onhand.push(new item('flintpickaxe', 'pickaxe', 200, 1));
         
-        var r = new storage(-2,0);
-        r.onhand.push(new item('flinthammer', 'hammer', 50, 1));
-        r.onhand.push(new item('flinthammer', 'hammer', 50, 1));
-        r.onhand.push(new item('flinthammer', 'hammer', 50, 1));
-        r.onhand.push(new item('flinthammer', 'hammer', 50, 1));
-        
-        findunlocks('woodshovel');
-        findunlocks('flintpickaxe');
-*/        
       });
       
       function findunlocks(newitem) {
@@ -323,7 +339,7 @@
       
     </script>
   </body>
-<html >
+<html>
 
 
 
