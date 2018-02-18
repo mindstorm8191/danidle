@@ -1,21 +1,25 @@
-class flintfilter extends activeblock {
+class stonefilter extends activeblock {
   constructor(gridx, gridy) {
     super(gridx, gridy);
-    this.name = 'Flint filter';
+    this.name = 'Stone Filter';
     this.onhand = []; // array of anything this block is holding, usually for output
-    this.rawgravel = [];
+    this.stone = [];  // this needs to be crushed stone, not normal stone
     this.counter = 0;
     this.shovel = null;
     this.targetshovel = '';
-    this.drawgameblock('img/filter_flint.png', 1); // use 1 to include a scroll bar, or 0 to exclude that
+    this.targetoutput = ''; // what type of output to do next
+    this.currentoutput = ''; // what is currently being output
+    this.timetocomplete = 0;  // how long this process will take to complete, based on what ore is being processed
+    this.amountneeded = 0;    // how much crushed stone is needed before processing can begin
+    this.drawgameblock('img/filter_stone.png', 1); // use 1 to include a scroll bar, or 0 to exclude that
   }
   
   acceptsinput(item) {
     //activeblock function to determine if a given item (name only) can be accepted by this block
     // returns 1 if accepted, 0 if not
     // This should only accept raw gravel
-    if(item.name=='rawgravel') {
-      if(this.rawgravel.length<10) {
+    if(item.name=='crushedstone') {
+      if(this.stone.length<10) {
         return 1;
     } }
     return 0;
@@ -23,10 +27,10 @@ class flintfilter extends activeblock {
   
   receiveitem(item) {
     // activeblock function to receive an actual item (as an object) from another source.
-    if(item.name=='rawgravel') {
-      this.rawgravel.push(item);
+    if(item.name=='crushedstone') {
+      this.stone.push(item);
     }else{
-      console.log('Error in flintfilter->receiveitem - recieved '+ item.name +', this should only receive raw gravel');
+      console.log('Error in stonefilter->receiveitem - recieved '+ item.name +', this should only receive crushed stone');
     }
   }
   
@@ -35,7 +39,11 @@ class flintfilter extends activeblock {
     // askedlist - for this search, the list of blocks that have already been queried for possible outputs.  This is useful for linked things (such as bucketline movers)
     //             which will ask nearby items what it also provides, and to avoid infinite loops in its search
     // return type is an array of item names
-    return ['gravel', 'flint'];
+    return ['copperore', 'crushedstone'];
+    
+    // In order for players to get the most out of stone, they will be able to filter multiple elements from the same 'stack' of stone.  However, they will only be able
+    // to filter any one element once, from any piece of crushed stone.  To ensure this works, we will add a variable to the crushed stone on each pass, denoting what
+    // elements have been removed.  If a user tries to filter the same element out of a given stone, they will only get the same bit of stone back.
   }
 
   nextoutput() {
@@ -63,8 +71,15 @@ class flintfilter extends activeblock {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
     
     if(this.shovel!=null) {  // this does not load a shovel right when the block starts.  The user will have to select the block and load one in
-      if(this.onhand.length<15) {
-        if(this.rawgravel.length>=5) {  // need at least 5 gravel on hand before starting
+      if(this.currentoutput=='') {
+        this.currentoutput = this.targetoutput;
+        switch(this.currentoutput) {  // determine how much material is needed, along with how long we need to process the item
+          case '': break; // nothing done here. Don't even need to worry about updating numbers
+          case 'copperore': this.timetocomplete = 10; this.amountneeded = 5; break;
+        }
+      }
+      if(this.onhand.length<50) {
+        if(this.stone.length>=this.amountneeded) {  // need at least 5 gravel on hand before starting
           if(workpoints>=1) {
             workpoints--;
             this.counter+= this.shovel.efficiency;
@@ -92,15 +107,19 @@ class flintfilter extends activeblock {
   
   drawpanel() {
     // activeblock functino that generates the content
-    $("#gamepanel").html('<center><b>Flint Filter</b></center><br /><br />'+
-                         'Filters flint out of raw gravel.  With 5 raw gravel, returns 1 flint and 4 pure gravel.<br /><br />'+
+    $("#gamepanel").html('<center><b>Stone Filter</b></center><br /><br />'+
+                         'Filters ores out of crushed stone (not solid stone).  The ore to output is selected by the buttons below.  Multiple ore types can be filtered out of the '+
+                         'same pile of crushed stone by daisy-chaining filters.<br /><br />'+
                          'Priority: <img src="img/arrowleft.png" onclick="selectedblock.setpriority(-1)"> '+
                          '<span id="sidepanelpriority">'+ this.priority +'</span> '+
                          '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)"><br />'+
-                         'Progress: <span id="panelprogress">'+ Math.floor((this.counter/15.0)*100) +'</span>%<br />'+
-                         'Raw gravel stored: <span id="panelgravel">'+ this.rawgravel.length +'</span><br />'+
-                         'Output items: <span id="panelstock">'+ this.onhand.length +'</span><br />'+
+                         'Progress: <span id="sidepanelprogress">'+ Math.floor((this.counter/15.0)*100) +'</span>%<br />'+
+                         'Crushed stone stored: <span id="sidepanelstone">'+ this.stone.length +'</span><br />'+
+                         'Output items: <span id="sidepanelstock">'+ this.onhand.length +'</span><br />'+
                          '<a href="#" onclick="selectedblock.deleteblock()">Delete Block</a><br /><br />'+
+                         'Output items:<br />'+
+                         '<span id="sidepaneloutput" class="sidepanelbutton" style="background-color:'+ this.outputchoicecolor('') +';" onclick="selectedblock.chooseoutput(\'\');">None</span>'+
+                         '<span id="sidepaneloutputcopperore" class="sidepanelbutton" style="background-color:'+ this.outputchoicecolor('copperore') +';" onclick="selectedblock.chooseoutput(\'copperore\');">Copper Ore</span><br /><br />'+
                          'Tool Selection:<br /><b>Shovel</b><br />');
     if(this.shovel==null) {
       $("#gamepanel").append('<span id="sidepanelactivetool">none loaded</span><br />');
@@ -110,11 +129,26 @@ class flintfilter extends activeblock {
     this.displaytoollist(this.targetshovel, ['woodshovel', 'flintshovel']);
   }
   
+//  drawoutputlist() {
+    
+//  }
+
+  outputchoicecolor(choice) {
+  // Returns what color a given output option should be displayed as, for its button.
+  // choice - text of what color to check for
+    
+    if(this.targetoutput==choice) {
+      return 'green';
+    }else{
+      return 'red';
+    }
+  }
+  
   updatepanel() {
     // activeblock function to update the side panel once per tick
-    $("#panelprogress").html(Math.floor((this.counter/12.0)*100));
-    $("#panelgravel").html(this.rawgravel.length);
-    $("#panelstock").html(this.onhand.length);
+    $("#sidepanelprogress").html(Math.floor((this.counter/12.0)*100));
+    $("#sidepanelstone").html(this.rawgravel.length);
+    $("#sidepanelstock").html(this.onhand.length);
     
       // Update the status of any tools being used
     if(this.shovel==null) {
@@ -122,7 +156,7 @@ class flintfilter extends activeblock {
     }else{
       $("#sidepanelactivetool").html(this.shovel.name +' ('+ (Math.floor((this.shovel.endurance / this.shovel.totalendurance)*100)) +'% health)');
     }
-    this.updatetoollist(this.targetshovel, ['woodshovel', 'flintshovel']);
+    this.displaytoollist(this.targetshovel, ['woodshovel', 'flintshovel']);
   }
   
   picktool(newshovelname) {

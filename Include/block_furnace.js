@@ -156,7 +156,7 @@ class furnace extends activeblock {
   drawpanel() {
     // activeblock functino that generates the content
     $("#gamepanel").html('<center><b>Furnace</b></center><br /><br />'+
-                         'Cooks things and smelts ores into metals.  To build, load with 20 dirt bricks, then provide fuel (firewood) and material. Furnace will need time to '+
+                         'A shaped furnace where extra air can be applied to the fire.  Used to smelt ores into metals.  To build, load with 20 dirt bricks, then provide fuel (firewood) and material. Furnace will need time to '+
                          'heat up, and looses heat over time.  Fuel will only be used if there is work to be done.<br />');
     if(this.constructed==0) {
       // This is not yet built. Show the total bricks left before this can be used

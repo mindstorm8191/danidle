@@ -47,7 +47,7 @@ class flinttoolmaker extends activeblock {
     //             which will ask nearby items what it also provides, and to avoid infinite loops in its search
     // return type is an array of item names
     
-    return ['flintknife', 'flintshovel', 'flintaxe', 'flintpickaxe', 'flinthammer'];
+    return ['flintknife', 'flintshovel', 'flintaxe', 'flintpickaxe', 'flinthammer', 'flintpointspear', 'torch'];
   }
 
   nextoutput() {
@@ -85,7 +85,7 @@ class flinttoolmaker extends activeblock {
               workpoints--;
               this.counter++;
               if(this.counter>=10) {
-                this.counter-=12;
+                this.counter-=10;
                 this.onhand.push(new item('flintknife', 'knife', 300, 1.0)); // flint knives have a pretty good lifespan
                 this.flint.splice(0,2);
                 findunlocks('flintknife');
@@ -200,6 +200,55 @@ class flinttoolmaker extends activeblock {
             this.currentoutput = this.targetoutput;
           }
         break;
+        case 'torch': // Torch. Only needs 1 stick and 2 twine
+          if(this.stick.length>=1) {
+            if(this.twine.length>=4) {
+              if(workpoints>=1) {
+                workpoints--;
+                this.counter++;
+                if(this.counter>=8) {
+                  this.counter-=8;
+                  this.onhand.push(new item('torch'));
+                  this.stick.splice(0,1);
+                  this.twine.splice(0,2);
+                  findunlocks('torch');
+                  this.currentoutput = this.targetoutput;
+              } }
+              $("#"+ this.id +"progress").css({"width":(this.counter*7.5)}); // aka counter * 60/8
+            }else{
+              this.currentoutput = this.targetoutput;
+            }
+          }else{
+            this.currentoutput = this.targetoutput;
+          }
+        break;
+        case 'flintpointspear':  // Flint spear. Lasts longer than a wood spear, but isn't any more effective at killing animals. Needs 1 stick, 2 flint and 2 twine
+          if(this.stick.length>=2) {
+            if(this.flint.length>=2) {
+              if(this.twine.length>=2) {
+                if(workpoints>=1) {
+                  workpoints--;
+                  this.counter++;
+                  if(this.counter>=10) {
+                    this.counter-=10;
+                    this.onhand.push(new item('flintpointspear', 'weapon', 90, 1)); // flint spears aren't much sharper than wood, but will last longer
+                    this.stick.splice(0,2);
+                    this.flint.splice(0,2);
+                    this.twine.splice(0,2);
+                    findunlocks('flintpointspear');
+                    this.currentoutput = this.targetoutput;
+                } }
+                $("#"+ this.id +"progress").css({"width":(this.counter*6)}); // aka counter * 60/10
+              }else{
+                this.currentoutput = this.targetoutput;
+              }
+            }else{
+              this.currentoutput = this.targetoutput;
+            }
+          }else{
+            this.currentoutput = this.targetoutput;
+          }
+        break;
       }
     }
   }
@@ -213,16 +262,20 @@ class flinttoolmaker extends activeblock {
                          '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)"><br />'+
                          'Flint on hand: <span id="sidepanelflint">'+ this.flint.length +'</span><br />'+
                          'Sticks on hand: <span id="sidepanelsticks">'+ this.stick.length +'</span><br />'+
+                         'Twine on hand: <span id="sidepaneltwine">'+ this.twine.length +'</span><br />'+
+                         'Current progress: <span id="sidepanelprogress">'+ (Math.floor((this.counter/this.timetocomplete())*100)) +'</span>%<br />'+
                          'Output items stored: <span id="sidepanelonhand">'+ this.onhand.length +'</span><br />'+
                          '<a href="#" onclick="selectedblock.deleteblock()">Delete Block</a><br /><br />'+
     // Now, draw the 4 output options, selecting color based on which one is selected.  Also, include no output as an option
                          '<b>Output tools</b><br />'+
-                         '<span id="sidepaneltool"             class="sidepanelbutton" style="background-color:'+ this.getblockcolor('')             +';"                                          onclick="selectedblock.pickoutput(\'\');">none</span>'+
-                         '<span id="sidepaneltoolflintknife"   class="sidepanelbutton" style="background-color:'+ this.getblockcolor('flintknife')   +';" title="Needs 2 flint"                    onclick="selectedblock.pickoutput(\'flintknife\');">Flint Knife</span>'+
-                         '<span id="sidepaneltoolflintshovel"  class="sidepanelbutton" style="background-color:'+ this.getblockcolor('flintshovel')  +';" title="Needs 3 flint, 3 sticks, 3 twine" onclick="selectedblock.pickoutput(\'flintshovel\');">Flint Shovel</span>'+
-                         '<span id="sidepaneltoolflintaxe"     class="sidepanelbutton" style="background-color:'+ this.getblockcolor('flintaxe')     +';" title="Needs 4 flint, 3 sticks, 3 twine" onclick="selectedblock.pickoutput(\'flintaxe\');">Flint Axe</span>'+
-                         '<span id="sidepaneltoolflintpickaxe" class="sidepanelbutton" style="background-color:'+ this.getblockcolor('flintpickaxe') +';" title="Needs 6 flint, 3 sticks, 4 twine" onclick="selectedblock.pickoutput(\'flintpickaxe\');">Flint Pickaxe</span>'+
-                         '<span id="sidepaneltoolflinthammer"  class="sidepanelbutton" style="background-color:'+ this.getblockcolor('flinthammer')  +';" title="Needs 9 flint, 3 sticks, 4 twine" onclick="selectedblock.pickoutput(\'flinthammer\');">Flint Hammer</span>');
+                         '<span id="sidepaneltool"                class="sidepanelbutton" style="background-color:'+ this.getblockcolor('')                +';"                                          onclick="selectedblock.pickoutput(\'\');">none</span>'+
+                         '<span id="sidepaneltoolflintknife"      class="sidepanelbutton" style="background-color:'+ this.getblockcolor('flintknife')      +';" title="Needs 2 flint"                    onclick="selectedblock.pickoutput(\'flintknife\');">Flint Knife</span>'+
+                         '<span id="sidepaneltoolflintshovel"     class="sidepanelbutton" style="background-color:'+ this.getblockcolor('flintshovel')     +';" title="Needs 3 flint, 3 sticks, 3 twine" onclick="selectedblock.pickoutput(\'flintshovel\');">Flint Shovel</span>'+
+                         '<span id="sidepaneltoolflintaxe"        class="sidepanelbutton" style="background-color:'+ this.getblockcolor('flintaxe')        +';" title="Needs 4 flint, 3 sticks, 3 twine" onclick="selectedblock.pickoutput(\'flintaxe\');">Flint Axe</span>'+
+                         '<span id="sidepaneltoolflintpickaxe"    class="sidepanelbutton" style="background-color:'+ this.getblockcolor('flintpickaxe')    +';" title="Needs 6 flint, 3 sticks, 4 twine" onclick="selectedblock.pickoutput(\'flintpickaxe\');">Flint Pickaxe</span>'+
+                         '<span id="sidepaneltoolflinthammer"     class="sidepanelbutton" style="background-color:'+ this.getblockcolor('flinthammer')     +';" title="Needs 9 flint, 3 sticks, 4 twine" onclick="selectedblock.pickoutput(\'flinthammer\');">Flint Hammer</span>'+
+                         '<span id="sidepaneltoolflintpointspear" class="sidepanelbutton" style="background-color:'+ this.getblockcolor('flintpointspear') +';" title="Needs 2 flint, 2 sticks, 2 twine" onclick="selectedblock.pickoutput(\'flintpointspear\');">Flint-point Spear</span>'+
+                         '<span id="sidepaneltooltorch"           class="sidepanelbutton" style="background-color:'+ this.getblockcolor('torch')           +';" title="Needs 1 stick, 2 twine, no flint" onclick="selectedblock.pickoutput(\'torch\');">Torch</span>');
   }
   
   updatepanel() {
@@ -230,6 +283,8 @@ class flinttoolmaker extends activeblock {
     // Since the tool selection is really managed by user input, we don't need to worry about managing that here
     $("#sidepanelflint").html(this.flint.length);
     $("#sidepanelsticks").html(this.stick.length);
+    $("#sidepaneltwine").html(this.twine.length);
+    $("#sidepanelprogress").html(Math.floor((this.counter/this.timetocomplete())*100));
     $("#sidepanelonhand").html(this.onhand.length);
   }
   
@@ -239,6 +294,19 @@ class flinttoolmaker extends activeblock {
       return 'green';
     }else{
       return 'red';
+    }
+  }
+  
+  timetocomplete() {
+    // returns the time needed to complete the current task.  May return 0 if nothing has been selected
+    switch(this.currentoutput) {
+      case 'flintknife': return 10;
+      case 'flintshovel': return 12;
+      case 'flintaxe': return 12;
+      case 'flintpickaxe': return 12;
+      case 'flinthammer': return 12;
+      case 'torch': return 8;
+      case 'flintpointspear': return 10;
     }
   }
   

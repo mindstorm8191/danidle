@@ -77,7 +77,7 @@ class butchershop extends activeblock {
       }
     }else{
       if(this.input.length>0) {
-        if(this.onhand.length<20) {
+        if(this.onhand.length<40) {
           if(workpoints>=1) {
             workpoints--;
             this.counter += this.knife.efficiency;
@@ -95,6 +95,9 @@ class butchershop extends activeblock {
                   for(var i=0;i<5;i++) {
                     this.onhand.push(new item('bone'));
                   }
+                  for(var i=0;i<4;i++) {
+                    this.onhand.push(new item('animalskin'));
+                  }
                 break;
                 case 'deadwolf':
                   for(var i=0;i<8;i++) {
@@ -102,7 +105,8 @@ class butchershop extends activeblock {
                   }
                   this.onhand.push(new item('bone'));
                   this.onhand.push(new item('bone'));
-                  this.onhand.push(new item('bone'));
+                  this.onhand.push(new item('animalskin'));
+                  this.onhand.push(new item('animalskin'));
                 break;
                 case 'deadchicken':
                   this.onhand.push(new item('rawchickenmeat'));
@@ -182,3 +186,6 @@ class butchershop extends activeblock {
     super.deleteblock();
   }
 }
+
+
+

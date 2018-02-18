@@ -93,7 +93,17 @@ class bucketline extends activeblock {
           $("#"+ this.id +"img").attr("src", "img/bucketline_empty.png");
         }
       }else{
-        // Already holding something. Search nearby blocks for a valid place to put it down at
+        // Already holding something. Start by reducing the timer value of any food related items
+        switch(this.onhand.name) {
+          case 'deaddeer': case 'deadchicken': case 'deadwolf': case 'rawdeermeat': case 'rawchickenmeat': case 'rawwolfmeat':
+            this.onhand.lifetime--;
+            if(this.onhand.lifetime<=0) {
+              this.onhand = null;
+            }
+          break;
+        }
+        
+        // Now search nearby blocks for a valid place to put it
         for(var i=0; i<4; i++) {
           if(this.pickupside!=i) {
             var neighbor = this.getneighbor(i);
