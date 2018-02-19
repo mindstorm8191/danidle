@@ -76,36 +76,38 @@ class minerspost extends activeblock {
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
     if(this.pickaxe!=null) {
-      if(this.woodpost.length>=1) {
-        if(this.torch.length>=1) {
-          if(this.twine.length>=1) {
-            if(workpoints>=1) {
-              workpoints--;
-              this.counter += this.pickaxe.efficiency;
-              this.pickaxe.endurance--;
-              if(this.pickaxe.endurance<=0) {  // This pickaxe is worn out
-                this.pickaxe = blocklist.findinstorage(this.targetpickaxe, 1);
-              }
-              if(this.counter>=18) {
-                this.woodpost.splice(0,1); // consume 1 post
-                this.torch.splice(0,1); // consume 1 torch (for now. We may change the rate of torch consumption based on how deep the mine is)
-                this.levelprogress++; // increase the progress of this level
-                if(this.depth>20) { // determine if the player has reached the depth necessary to start collecting ores
-                  this.onhand.push(new item('copperorestone'));
-                  if(this.levelprogress>=50) {
-                    this.depth++;
-                    this.twine.splice(0,1);
-                    this.levelprogress -= 20;
-                  }
-                }else{
-                  this.onhand.push(new item('rawstone'));
-                  if(this.levelprogress>=20) {
-                    this.depth++;
-                    this.twine.splice(0,1);
-                    this.levelprogress -= 20;
-              } } }
-              $("#"+ this.id +"progress").css({"width":(this.counter*3.333333)}); // aka counter * 60/18
-      } } } }
+      if(this.onhand.length<20) {
+        if(this.woodpost.length>=1) {
+          if(this.torch.length>=1) {
+            if(this.twine.length>=1) {
+              if(workpoints>=1) {
+                workpoints--;
+                this.counter += this.pickaxe.efficiency;
+                this.pickaxe.endurance--;
+                if(this.pickaxe.endurance<=0) {  // This pickaxe is worn out
+                  this.pickaxe = blocklist.findinstorage(this.targetpickaxe, 1);
+                }
+                if(this.counter>=18) {
+                  this.woodpost.splice(0,1); // consume 1 post
+                  this.torch.splice(0,1); // consume 1 torch (for now. We may change the rate of torch consumption based on how deep the mine is)
+                  this.levelprogress++; // increase the progress of this level
+                  this.counter -= 18;  // reduce the currently level progress to zero
+                  if(this.depth>20) { // determine if the player has reached the depth necessary to start collecting ores
+                    this.onhand.push(new item('copperorestone'));
+                    if(this.levelprogress>=50) {
+                      this.depth++;
+                      this.twine.splice(0,1);
+                      this.levelprogress -= 20;
+                    }
+                  }else{
+                    this.onhand.push(new item('rawstone'));
+                    if(this.levelprogress>=20) {
+                      this.depth++;
+                      this.twine.splice(0,1);
+                      this.levelprogress -= 20;
+                } } }
+                $("#"+ this.id +"progress").css({"width":(this.counter*3.333333)}); // aka counter * 60/18
+      } } } } }
     }else{
       // no pickaxe loaded.  Let's grab one now (if one is selected)
       this.pickaxe = blocklist.findinstorage(this.targetpickaxe, 1);  // if target pickaxe is a null string, this will already return null
@@ -125,7 +127,7 @@ class minerspost extends activeblock {
                          'Unused twine on hand: <span id="sidepaneltwine">'+ this.twine.length +'</span><br />'+
                          'Current depth: <span id="sidepaneldepth">'+ this.depth +'</span><br />'+
                          'Progress at depth: <span id="sidepanellevelprogress">'+ this.levelprogress +'</span><br />'+
-                         'Current block progress: <span id="sidepanelprogress">'+ this.counter +'</span>%<br /><br />'+
+                         'Current block progress: <span id="sidepanelprogress">'+ Math.floor((this.counter/18.0)*100) +'</span>%<br /><br />'+
                          'Tool Selection:<br /><b>Pickaxe</b><br />');
     if(this.pickaxe==null) {
       $("#gamepanel").append('<span id="sidepanelactivetool">none loaded</span><br />');
@@ -142,7 +144,7 @@ class minerspost extends activeblock {
     $("#sidepaneltwince").html(this.twine.length);
     $("#sidepaneldepth").html(this.depth);
     $("#sidepanellevelprogress").html(this.levelprogress);
-    $("#sidepanelprogress").html(this.counter);
+    $("#sidepanelprogress").html(Math.floor((this.counter/18.0)*100));
     if(this.pickaxe==null) {
       $("#sidepanelactivetool").html('none loaded');
     }else{
