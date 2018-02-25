@@ -1,7 +1,7 @@
 class watercup extends activeblock {
   constructor(gridx, gridy) {
     super(gridx, gridy);
-    this.name = 'Water Cup';
+    this.name = 'watercup';
     this.onhand = []; // array of anything this block is holding, usually for output
     this.cup = [];
     this.drawgameblock('img/watercup.png', 0); // use 1 to include a scroll bar, or 0 to exclude that
@@ -57,7 +57,7 @@ class watercup extends activeblock {
       return null;
     }
   }
-
+  
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
     if(this.onhand.length<5) {
@@ -87,6 +87,21 @@ class watercup extends activeblock {
     // activeblock function to update the panel once per tick
     $("#sidepanelcup").html(this.cup.length);
     $("#sidepanelstock").html(this.onhand.length);
+  }
+  
+  reload() {
+    // activeblock function to manage regenerating the game while loading.  This is mostly used to re-instantiate items into object, as using localStorage and JSON doesn't
+    // hold onto the class instances when re-generating classes.  Therefore we need to use Object.setPrototypeOf(targetobject, classname.prototype) on each block instance
+    // (this is already done by here) and also any items this block contains.
+    // In this function, we also need to add any editable items back into the foods list array.
+    
+    for(var i=0; i<this.cup.length; i++) {
+      Object.setPrototypeOf(this.cup[i], item.prototype);
+    }
+    for(var i=0; i<this.onhand.length; i++) {
+      Object.setPrototypeOf(this.onhand[i], item.prototype);
+    }
+    this.drawgameblock('img/watercup.png', 0);
   }
 }
 

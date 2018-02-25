@@ -36,7 +36,7 @@ class activeblock {
     console.log('New block ('+ this.name +') still needs an outputitem() function');
     return null;
   }
-
+  
   update() {
     // Backup for the update function.  Each activeblock type should have its own update function and fully override this one.
     console.log('New block ('+ this.name +') still needs an update() function');
@@ -50,6 +50,11 @@ class activeblock {
   updatepanel() {
     // Another backup function
     console.log('New block ('+ this.name +') still needs an updatepanel() function');
+  }
+  
+  reload() {
+    // Another backup function
+    console.log('New block ('+ this.name +') still needs a reload() function');
   }
   
   selectblock() {

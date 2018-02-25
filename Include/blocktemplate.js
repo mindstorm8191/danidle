@@ -47,7 +47,7 @@ class blocknamehere extends activeblock {
       return null;
     }
   }
-
+  
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
 
@@ -63,4 +63,11 @@ class blocknamehere extends activeblock {
     // activeblock function to update the panel once per tick
     
   }
+  
+  reload() {
+    // activeblock function to manage regenerating the game while loading.  This is mostly used to re-instantiate items into object, as using localStorage and JSON doesn't
+    // hold onto the class instances when re-generating classes.  Therefore we need to use Object.setPrototypeOf(targetobject, classname.prototype) on each block instance
+    // (this is already done by here) and also any items this block contains.
+    // In this function, we also need to add any editable items back into the foods list array. 
+  }  
 }

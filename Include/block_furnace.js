@@ -1,7 +1,7 @@
 class furnace extends activeblock {
   constructor(gridx, gridy) {
     super(gridx, gridy);
-    this.name = 'Furnace';
+    this.name = 'furnace';
     this.input = [];
     this.working = null;  // what item is currently in the furnace
     this.fuel = [];       // fuel stored on hand, not being used yet.  Fuel won't be used unless there is work to be done 
@@ -108,7 +108,7 @@ class furnace extends activeblock {
       return null;
     }
   }
-
+  
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
     if(this.constructed!=0) {
@@ -191,6 +191,25 @@ class furnace extends activeblock {
       $("#sidepanelinput").html(this.input.length);
       $("#sidepanelstock").html(this.onhand.length);
     }
+  }
+  
+  reload() {
+    // activeblock function to manage regenerating the game while loading.  This is mostly used to re-instantiate items into object, as using localStorage and JSON doesn't
+    // hold onto the class instances when re-generating classes.  Therefore we need to use Object.setPrototypeOf(targetobject, classname.prototype) on each block instance
+    // (this is already done by here) and also any items this block contains.
+    // In this function, we also need to add any editable items back into the foods list array.
+    
+    for(var i=0; i<this.input.length; i++) {
+      Object.setPrototypeOf(this.input[i], item.prototype);
+    }
+    for(var i=0; i<this.fuel.length; i++) {
+      Object.setPrototypeOf(this.fuel[i], item.prototype);
+    }
+    for(var i=0; i<this.onhand.length; i++) {
+      Object.setPrototypeOf(this.onhand[i], item.prototype);
+    }
+    this.drawgameblock('img/furnace.png', 1);
+      // We haven't yet started to use the progress bar for this... but we'll probably have one
   }
 }
 

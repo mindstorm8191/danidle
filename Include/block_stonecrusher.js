@@ -1,7 +1,7 @@
 class stonecrusher extends activeblock {
   constructor(gridx, gridy) {
     super(gridx, gridy);
-    this.name = 'Stone Crusher';
+    this.name = 'stonecrusher';
     this.input = [];      // stone received from neighboring blocks
     this.onhand = [];     // crushed stone waiting to be removed
     this.counter = 0;     // how much progress has been made for the current operation
@@ -13,21 +13,24 @@ class stonecrusher extends activeblock {
   acceptsinput(item) {
     //activeblock function to determine if a given item (name only) can be accepted by this block
     // returns 1 if accepted, 0 if not
-    
-    if(item.name=='stone') {
-      if(this.input.length<8) {
-        return 1;
-    } }
+    if(this.input.length<8) {
+      switch(item.name) {
+        case 'stone': return 1;
+        case 'copperorestone': return 1;
+      }
+    }
     return 0;
   }
   
   receiveitem(item) {
     // activeblock function to receive an actual item (as an object) from another source.
     
-    if(item.name=='stone') {
-      this.input.push(item);
-    }else{
-      console.log('Error in flinttoolmaker->receiveitem: item received ('+ item.name +') is not allowed here. this item has been lost');
+    switch(item.name) {
+      case 'stone': case 'copperorestone':
+        this.input.push(item);
+      break;
+      default:
+        console.log('Error in flinttoolmaker->receiveitem: item received ('+ item.name +') is not allowed here. this item has been lost');
     }
   }
   
@@ -37,7 +40,7 @@ class stonecrusher extends activeblock {
     //             which will ask nearby items what it also provides, and to avoid infinite loops in its search
     // return type is an array of item names
     
-    return ['crushedstone'];
+    return ['crushedstone', 'crushedcopperore'];
   }
 
   nextoutput() {
@@ -61,7 +64,7 @@ class stonecrusher extends activeblock {
       return null;
     }
   }
-
+  
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
     if(this.hammer==null) {
@@ -80,8 +83,11 @@ class stonecrusher extends activeblock {
             }
             if(this.counter>12) {
               this.counter-=12;
+              switch(this.input[0].name) {
+                case 'stone': this.onhand.push(new item('crushedstone')); break;
+                case 'copperorestone': this.onhand.push(new item('crushedcopperore')); break;
+              }
               this.input.splice(0,1); // delete one of the stones
-              this.onhand.push(new item('crushedstone'));
             }
             $("#"+ this.id +"progress").css({"width":(this.counter*5)}); // aka 60/12
     } } } }
@@ -116,6 +122,23 @@ class stonecrusher extends activeblock {
       $("#sidepanelactivetool").html(this.hammer.name +' ('+ (Math.floor((this.hammer.endurance / this.hammer.totalendurance)*100)) +'% health)');
     }
     this.updatetoollist(this.targethammer, ['flinthammer']);
+  }
+  
+  reload() {
+    // activeblock function to manage regenerating the game while loading.  This is mostly used to re-instantiate items into object, as using localStorage and JSON doesn't
+    // hold onto the class instances when re-generating classes.  Therefore we need to use Object.setPrototypeOf(targetobject, classname.prototype) on each block instance
+    // (this is already done by here) and also any items this block contains.
+    // In this function, we also need to add any editable items back into the foods list array.
+    
+    if(this.hammer!=null) Object.setPrototypeOf(this.hammer, item.prototype);
+    for(var i=0; i<this.input.length; i++) {
+      Object.setPrototypeOf(this.input[i], item.prototype);
+    }
+    for(var i=0; i<this.onhand.length; i++) {
+      Object.setPrototypeOf(this.onhand[i], item.prototype);
+    }
+    this.drawgameblock('img/stonecrusher.png', 1);
+    $("#"+ this.id +"progress").css({"width":(this.counter*5)});
   }
   
   picktool(newtool) {

@@ -1,7 +1,7 @@
 class clayformmaker extends activeblock {
   constructor(gridx, gridy) {
     super(gridx, gridy);
-    this.name = 'Clay Form Maker';
+    this.name = 'clayformmaker';
     this.counter = 0;
     this.timetocomplete = 0; // since time to complete objects can vary, this determines how much time is necessary to produce a given item, based on what they are making
     this.input = [];
@@ -129,6 +129,22 @@ class clayformmaker extends activeblock {
         }else{
           this.updateoutputlist();
     } } }
+  }
+  
+  reload() {
+    // activeblock function to manage regenerating the game while loading.  This is mostly used to re-instantiate items into object, as using localStorage and JSON doesn't
+    // hold onto the class instances when re-generating classes.  Therefore we need to use Object.setPrototypeOf(targetobject, classname.prototype) on each block instance
+    // (this is already done by here) and also any items this block contains.
+    // In this function, we also need to add any editable items back into the foods list array.
+    
+    for(var i=0; i<this.input.length; i++) {
+      Object.setPrototypeOf(this.input[i], item.prototype);
+    }
+    for(var i=0; i<this.onhand.length; i++) {
+      Object.setPrototypeOf(this.onhand[i], item.prototype);
+    }
+    this.drawgameblock('img/clayformmaker.png', 1);
+    $("#"+ this.id +"progress").css({"width":(this.counter*(60/this.timetocomplete))});
   }
 
   drawoutputlist() {

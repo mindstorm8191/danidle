@@ -1,7 +1,7 @@
 class woodshovel extends activeblock {
   constructor(gridx, gridy) {
     super(gridx, gridy);
-    this.name = 'Wood Shovel';
+    this.name = 'woodshovel';
     this.onhand = [];
     this.sticks = [];
     this.counter = 0;
@@ -102,6 +102,22 @@ class woodshovel extends activeblock {
     }else{
       $("#sidepanel_status").html('Progress: '+ Math.floor((this.counter/12.0)*100) +'%');
     }
+  }
+  
+  reload() {
+    // activeblock function to manage regenerating the game while loading.  This is mostly used to re-instantiate items into object, as using localStorage and JSON doesn't
+    // hold onto the class instances when re-generating classes.  Therefore we need to use Object.setPrototypeOf(targetobject, classname.prototype) on each block instance
+    // (this is already done by here) and also any items this block contains.
+    // In this function, we also need to add any editable items back into the foods list array.
+    
+    for(var i=0; i<this.sticks.length; i++) {
+      Object.setPrototypeOf(this.sticks[i], item.prototype);
+    }
+    for(var i=0; i<this.onhand.length; i++) {
+      Object.setPrototypeOf(this.onhand[i], item.prototype);
+    }
+    this.drawgameblock('img/shovel_wood.png', 1);
+    $("#"+ this.id +"progress").css({"width":(this.counter*5)});
   }
 }
 

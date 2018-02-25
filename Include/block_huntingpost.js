@@ -1,7 +1,7 @@
 class huntingpost extends activeblock {
   constructor(gridx, gridy) {
     super(gridx, gridy);
-    this.name = 'Hunting Post';
+    this.name = 'huntingpost';
     this.weapon = null;  // current weapon being used for hunting
     this.targetweapon = ''; // next weapon to use when the current one breaks
     this.onhand = [];     // array of anything this block is holding, usually for output
@@ -51,7 +51,7 @@ class huntingpost extends activeblock {
       return null;
     }
   }
-
+  
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
     
@@ -123,11 +123,39 @@ class huntingpost extends activeblock {
     this.updatetoollist(this.targetweapon, ['woodpointspear', 'flintpointspear']);
   }
   
+  reload() {
+    // activeblock function to manage regenerating the game while loading.  This is mostly used to re-instantiate items into object, as using localStorage and JSON doesn't
+    // hold onto the class instances when re-generating classes.  Therefore we need to use Object.setPrototypeOf(targetobject, classname.prototype) on each block instance
+    // (this is already done by here) and also any items this block contains.
+    // In this function, we also need to add any editable items back into the foods list array.
+    
+    if(this.weapon!=null) Object.setPrototypeOf(this.weapon, item.prototype);
+    for(var i=0; i<this.onhand.length; i++) {
+      Object.setPrototypeOf(this.onhand[i], item.prototype);
+    }
+    this.drawgameblock('img/huntingpost.png', 1);
+    $("#"+ this.id +"progress").css({"width":(this.counter*2)});
+  }
+  
   picktool(newweapon) {
     this.targetweapon = newweapon;
     $("#sidepaneltool"               ).css('background-color', this.choosetoolcolor(this.targetweapon, ''));
     $("#sidepaneltoolwoodpointspear" ).css('background-color', this.choosetoolcolor(this.targetweapon, 'woodpointspear'));
     $("#sidepaneltoolflintpointspear").css('background-color', this.choosetoolcolor(this.targetweapon, 'flintpointspear'));
+  }
+  
+    deleteblock() {
+    // Sets up the block to be deleted.  The base block class has a delete function, but we need to add additional actions when deleting
+    // Return the tool to the storage it was in before being used
+    if(this.weapon!=null) {
+      var prevstorage = blocklist.findbyid(this.weapon.storagesource);
+      if(prevstorage!=null) {
+        if(prevstorage.acceptsinput(this.weapon)) {  // be sure this storage will still accept the shovel back
+          prevstorage.receiveitem(this.weapon);
+            // if the shovel isn't accepted, it will just be deleted when this block is destroyed
+    } } }
+    
+    super.deleteblock();
   }
 }
 

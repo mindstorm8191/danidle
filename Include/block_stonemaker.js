@@ -1,7 +1,7 @@
 class stonemaker extends activeblock {
   constructor(gridx, gridy) {
     super(gridx, gridy);
-    this.name = 'Stone Maker';
+    this.name = 'stonemaker';
     this.onhand = [];     // array of anything this block is holding, usually for output
     this.counter = 0;     // how much progress has been made for the current operation
     this.pickaxe = null;  // current pickaxe in use
@@ -48,7 +48,7 @@ class stonemaker extends activeblock {
       return null;
     }
   }
-
+  
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
     if(this.pickaxe!=null) {
@@ -101,6 +101,20 @@ class stonemaker extends activeblock {
     }
       // Also update the tool list, since the status of the tools can change at any time
     this.updatetoollist(this.targetpickaxe, ['flintpickaxe']);
+  }
+  
+  reload() {
+    // activeblock function to manage regenerating the game while loading.  This is mostly used to re-instantiate items into object, as using localStorage and JSON doesn't
+    // hold onto the class instances when re-generating classes.  Therefore we need to use Object.setPrototypeOf(targetobject, classname.prototype) on each block instance
+    // (this is already done by here) and also any items this block contains.
+    // In this function, we also need to add any editable items back into the foods list array.
+    
+    if(this.pickaxe!=null) Object.setPrototypeOf(this.pickaxe, item,prototype);
+    for(var i=0; i<this.onhand.length; i++) {
+      Object.setPrototypeOf(this.onhand[i], item.prototype);
+    }
+    this.drawgameblock('img/stone.png', 1);
+    $("#"+ this.id +"progress").css({"width":(this.counter*4)});
   }
   
   picktool(newtool) {

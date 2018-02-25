@@ -1,7 +1,7 @@
 class postmaker extends activeblock {
   constructor(gridx, gridy) {
     super(gridx, gridy);
-    this.name = 'Post Maker';
+    this.name = 'postmaker';
     this.onhand = []; // array of anything this block is holding, usually for output
     this.log = [];
     this.counter = 0;
@@ -61,7 +61,7 @@ class postmaker extends activeblock {
       return null;
     }
   }
-
+  
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
     
@@ -125,6 +125,23 @@ class postmaker extends activeblock {
       $("#sidepanelactivetool").html(this.axe.name +' ('+ (Math.floor((this.axe.endurance / this.axe.totalendurance)*100)) +'% health)');
     }
     this.updatetoollist(this.targetaxe, ['flintaxe']);
+  }
+  
+  reload() {
+    // activeblock function to manage regenerating the game while loading.  This is mostly used to re-instantiate items into object, as using localStorage and JSON doesn't
+    // hold onto the class instances when re-generating classes.  Therefore we need to use Object.setPrototypeOf(targetobject, classname.prototype) on each block instance
+    // (this is already done by here) and also any items this block contains.
+    // In this function, we also need to add any editable items back into the foods list array.
+    
+    if(this.axe!=null) Object.setPrototypeOf(this.axe, item.prototype);
+    for(var i=0; i<this.log.length; i++) {
+      Object.setPrototypeOf(this.log[i], item.prototype);
+    }
+    for(var i=0; i<this.onhand.length; i++) {
+      Object.setPrototypeOf(this.onhand[i], item.prototype);
+    }
+    this.drawgameblock('img/postmaker.png', 1);
+    $("#"+ this.id +"progress").css({"width":(this.counter*5)});
   }
   
   picktool(newaxename) {
