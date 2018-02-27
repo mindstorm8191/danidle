@@ -139,8 +139,9 @@
         blocklist.findinstorage = function(itemname, pickup) {
           // returns an item from a chest block matching the name, or null if no item of that exists in any chest
           // pickup - set to 1 if the item is to be collected, or 0 if this simply returns that it is available
+          //console.log('Searching for '+ itemname +' in any storage');
           for(var i=0; i<blocklist.length; i++) {
-            if(blocklist[i].name=='Storage') {
+            if(blocklist[i].name=='storage') {
               if(blocklist[i].possibleoutputs()==itemname) {
                 //console.log('blocklist.findinstorage: found '+ itemname);
                 if(pickup==1) {
@@ -179,6 +180,7 @@
         $("#gamepanel").html('');  // Also blank out the side panel
         $("#blockselector").html('');
         selectedblock = null;
+        lastblockid = 0;  // We need to re-set the last block ID
         blocklist = [];
         panellist = [];
         foodlist = [];
@@ -224,7 +226,9 @@
             case 'woodshovel':     Object.setPrototypeOf(blocklist[i],     woodshovel.prototype); break;
           }
           blocklist[i].reload();  // We'll have to handle the actual html reloading in here, since each block uses a different image and it isn't stored in the class
+          if(blocklist[i].id>lastblockid) lastblockid = blocklist[i].id;
         }
+        lastblockid++;  // Increment the last block id so we don't have ID conflicts
         foodconsumertimer = parseInt(localStorage.getItem('foodtimer'));
         population = parseInt(localStorage.getItem('population'));
       }
