@@ -78,9 +78,7 @@ class gravelmaker extends activeblock {
     // activeblock function that generates the content 
     $("#gamepanel").html('<center><b>Gravel Maker</b></center><br /><br />'+
                          'Collects gravel from the surrounding environment.  Gravel can be filtered to obtain flint.  Requires tools (at least a wooden shovel) to function.<br /><br />'+
-                         'Priority: <img src="img/arrowleft.png" onclick="selectedblock.setpriority(-1)"> '+
-                         '<span id="sidepanelpriority">'+ this.priority +'</span> '+
-                         '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)"><br />'+
+                         this.displaypriority() +'<br />'+
                          'Progress: <span id="panelprogress">'+ Math.floor((this.counter/12.0)*100) +'</span>%<br />'+
                          'Gravel stored: <span id="panelstock">'+ this.onhand.length +'</span><br />'+
                          '<a href="#" onclick="selectedblock.deleteblock()">Delete Block</a><br /><br />'+

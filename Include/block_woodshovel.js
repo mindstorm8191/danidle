@@ -72,9 +72,7 @@ class woodshovel extends activeblock {
     // Activeblock function to write the side panel when this block is selected
     $("#gamepanel").html('<center><b>Wood Shovel Maker</b></center><br />'+
                          'Accepts 5 sticks and turns it into 1 wood shovel.  Shovels unlock new resources such as gravel and dirt.<br /><br />'+
-                         'Priority: <img src="img/arrowleft.png" onclick="selectedblock.setpriority(-1)"> '+
-                         '<span id="sidepanelpriority">'+ this.priority +'</span> '+
-                         '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)"><br />'+
+                         this.displaypriority() +'<br />'+
                          'Currently has <span id="sidepanel_sticks">'+ this.sticks.length +'</span> sticks<br />'+
                          'Shovels on hand: <span id="sidepanel_shovels">'+ this.onhand.length +'</span><br />');
     if(this.counter==0) {

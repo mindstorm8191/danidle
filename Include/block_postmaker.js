@@ -98,9 +98,7 @@ class postmaker extends activeblock {
     $("#gamepanel").html('<center><b>Post Maker</b></center><br /><br />'+
                          'Turns 1 log into 2 wooden posts.  Requires an axe or saw (output will be double with a saw). Posts will be necessary for mining, and building '+
                          'structures.<br /><br />'+
-                         'Priority: <img src="img/arrowleft.png" onclick="selectedblock.setpriority(-1)"> '+
-                         '<span id="sidepanelpriority">'+ this.priority +'</span> '+
-                         '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)"><br />'+
+                         this.displaypriority() +'<br />'+
                          'Logs stored: <span id="panellogs">'+ this.log.length +'</span><br />'+
                          'Progress: <span id="panelprogress">'+ (Math.floor(this.counter/12.0)*100) +'</span>%<br />'+
                          'Posts stored: <span id="panelstock">'+ this.onhand.length +'</span><br />'+

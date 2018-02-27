@@ -93,9 +93,7 @@ class foragepost extends activeblock {
     $("#gamepanel").html('<center><b>Foraging Post</b></center><br /><br />'+
                          'Collects food from the surrounding lands. Colonists will be able to find apples, berries, tree nuts, and mushrooms.  Only supports up to 4 '+
                          'colonists - there isnt enough wild plants here to support more.<br />'+
-                         'Priority: <img src="img/arrowleft.png" onclick="selectedblock.setpriority(-1)"> '+
-                         '<span id="sidepanelpriority">'+ this.priority +'</span> '+
-                         '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)"><br />'+
+                         this.displaypriority() +'<br />'+
                          'Progress: <span id="sidepanelprogress">'+ Math.floor((this.counter/30.0)*100) +'</span>%<br />'+
                          'Food on hand: <span id="sidepanelstock">'+ this.onhand.length +'</span>');
   }

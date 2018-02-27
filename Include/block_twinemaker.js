@@ -79,9 +79,7 @@ class twinemaker extends activeblock {
     // activeblock functino that generates the content
     $("#gamepanel").html('<center><b>Twine Maker</b></center><br /><br />'+
                          'Cuts bark from young trees, turning it into twine. This task also turns twine into rope so it can be used.<br /><br />'+
-                         'Priority: <img src="img/arrowleft.png" onclick="selectedblock.setpriority(-1)"> '+
-                         '<span id="sidepanelpriority">'+ this.priority +'</span> '+
-                         '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)"><br />'+
+                         this.displaypriority() +'<br />'+
                          'Progress: <span id="sidepanelprogress">'+ (Math.floor((this.counter/20.0)*100)) +'</span>%<br />'+
                          'Twine on hand: <span id="sidepanelstock">'+ this.onhand.length +'</span><br />'+
                          '<a href="#" onclick="selectedblock.deleteblock()">Delete Block</a><br /><br />'+

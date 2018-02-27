@@ -79,9 +79,7 @@ class woodpointspear extends activeblock {
     // activeblock functino that generates the content
     $("#gamepanel").html('<center><b>Wood-point spear maker</b></center><br /><br />'+
                          'Turns a stick into a spear, without any extra parts.  Good for hunting<br /><br />'+
-                         'Priority: <img src="img/arrowleft.png" onclick="selectedblock.setpriority(-1)"> '+
-                         '<span id="sidepanelpriority">'+ this.priority +'</span> '+
-                         '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)"><br />'+
+                         this.displaypriority() +'<br />'+
                          'Sticks on hand: <span id="sidepanelstick">'+ this.stick.length +'</span><br />'+
                          'Progress: <span id="sidepanelprogress">'+ Math.floor((this.counter/10.0)*100) +'</span>%<br />'+
                          'Spears stocked: <span id="sidepanelspear">'+ this.onhand.length +'</span><br />'+

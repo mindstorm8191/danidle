@@ -83,9 +83,7 @@ class logmaker extends activeblock {
     // activeblock functino that generates the content
     $("#gamepanel").html('<center><b>Log Maker</b></center><br /><br />'+
                          'Uses an axe to cut logs from nearby trees. Requires tools (at least a flint axe) to function<br /><br />'+
-                         'Priority: <img src="img/arrowleft.png" onclick="selectedblock.setpriority(-1)"> '+
-                         '<span id="sidepanelpriority">'+ this.priority +'</span> '+
-                         '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)"><br />'+
+                         this.displaypriority() +'<br />'+
                          'Progress: <span id="panelprogress">'+ Math.floor((this.counter/12.0)*100) +'</span>%<br />'+
                          'Logs stored: <span id="panelstock">'+ this.onhand.length +'</span><br />'+
                          '<a href="#" onclick="selectedblock.deleteblock()">Delete Block</a><br /><br />'+

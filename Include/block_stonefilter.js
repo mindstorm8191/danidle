@@ -110,9 +110,7 @@ class stonefilter extends activeblock {
     $("#gamepanel").html('<center><b>Stone Filter</b></center><br /><br />'+
                          'Filters ores out of crushed stone (not solid stone).  The ore to output is selected by the buttons below.  Multiple ore types can be filtered out of the '+
                          'same pile of crushed stone by daisy-chaining filters.<br /><br />'+
-                         'Priority: <img src="img/arrowleft.png" onclick="selectedblock.setpriority(-1)"> '+
-                         '<span id="sidepanelpriority">'+ this.priority +'</span> '+
-                         '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)"><br />'+
+                         this.displaypriority() +'<br />'+
                          'Progress: <span id="sidepanelprogress">'+ Math.floor((this.counter/15.0)*100) +'</span>%<br />'+
                          'Crushed stone stored: <span id="sidepanelstone">'+ this.stone.length +'</span><br />'+
                          'Output items: <span id="sidepanelstock">'+ this.onhand.length +'</span><br />'+

@@ -96,9 +96,7 @@ class huntingpost extends activeblock {
     $("#gamepanel").html('<center><b>Hunting Post</b></center><br /><br />'+
                          'Operation point for hunting operations. Only 1 hunting post can be constructed for a given area. Requires weapons (such as spears) to function. Weapons '+
                          'are not loaded the same as items. Instead, place them in storage and they can then be loaded with the buttons below.<br />'+
-                         'Priority: <img src="img/arrowleft.png" onclick="selectedblock.setpriority(-1)"> '+
-                         '<span id="sidepanelpriority">'+ this.priority +'</span> '+
-                         '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)"><br />'+
+                         this.displaypriority() +'<br />'+
                          'Progress: <span id="sidepanelprogress">'+ Math.floor((this.counter/30.0)*100) +'</span>%<br />'+
                          'Items on hand: <span id="sidepanelstock">'+ this.onhand.length +'</span><br />'+
                          '<a href="#" onclick="selectedblock.deleteblock()">Delete Block</a><br /><br />'+

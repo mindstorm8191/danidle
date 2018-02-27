@@ -53,9 +53,7 @@ class stickmaker extends activeblock {
   drawpanel() {
     $("#gamepanel").html('<center><b>Stick Maker</b></center><br />'+
                          'Uses a worker to produce sticks from nearby trees.  The worker can be equipped with tools to produce sticks faster<br /><br />'+
-                         'Priority: <img src="img/arrowleft.png" onclick="selectedblock.setpriority(-1)"> '+
-                         '<span id="sidepanelpriority">'+ this.priority +'</span> '+
-                         '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)"><br />'+
+                         this.displaypriority() +'<br />'+
                          'Progress: <span id="panelprogress">'+ Math.floor((this.counter/6.0)*100) +'</span>%<br />'+
                          'Sticks stored: <span id="panelstock">'+ this.onhand.length +'</span><br /><br />'+
                          '<a href="#" onclick="selectedblock.deleteblock()">Delete Block</a>');

@@ -94,9 +94,7 @@ class flintfilter extends activeblock {
     // activeblock functino that generates the content
     $("#gamepanel").html('<center><b>Flint Filter</b></center><br /><br />'+
                          'Filters flint out of raw gravel.  With 5 raw gravel, returns 1 flint and 4 pure gravel.<br /><br />'+
-                         'Priority: <img src="img/arrowleft.png" onclick="selectedblock.setpriority(-1)"> '+
-                         '<span id="sidepanelpriority">'+ this.priority +'</span> '+
-                         '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)"><br />'+
+                         this.displaypriority() +'<br />'+
                          'Progress: <span id="panelprogress">'+ Math.floor((this.counter/15.0)*100) +'</span>%<br />'+
                          'Raw gravel stored: <span id="panelgravel">'+ this.rawgravel.length +'</span><br />'+
                          'Output items: <span id="panelstock">'+ this.onhand.length +'</span><br />'+

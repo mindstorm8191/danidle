@@ -77,9 +77,7 @@ class stonemaker extends activeblock {
     // activeblock function that generates the content
     $("#gamepanel").html('<center><b>Stone Maker</b></center><br /><br />'+
                          'Collects stone from the ground. Requires a pickaxe (at least a flint pickaxe) to function.<br />'+
-                         'Priority: <img src="img/arrowleft.png" onclick="selectedblock.setpriority(-1)"> '+
-                         '<span id="sidepanelpriority">'+ this.priority +'</span> '+
-                         '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)"><br />'+
+                         this.displaypriority() +'<br />'+
                          'Stone stored: <span id="sidepanelonhand">'+ this.onhand.length +'</span><br />'+
                          '<a href="#" onclick="selectedblock.deleteblock()">Delete Block</a><br /><br />'+
                          'Tool selection:<br /><b>Pickaxe</b><br />');

@@ -97,9 +97,7 @@ class stonecrusher extends activeblock {
     // activeblock functino that generates the content
     $("#gamepanel").html('<center><b>Stone crusher</b></center><br /><br />'+
                          'Crushes whole stone into small pieces, where ores can be extracted. Requires a hammer (flint at least) to function.<br /><br />'+
-                         'Priority: <img src="img/arrowleft.png" onclick="selectedblock.setpriority(-1)"> '+
-                         '<span id="sidepanelpriority">'+ this.priority +'</span> '+
-                         '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)"><br />'+
+                         this.displaypriority() +'<br />'+
                          'Stone on hand: <span id=sidepanelstone">'+ this.input.length +'</span><br />'+
                          'Crushed stone stock: <span id="sidepanelonhand">'+ this.onhand.length +'</span><br />'+
                          '<a href="#" onclick="selectedblock.deleteblock()">Delete Block</a><br /><br />'+

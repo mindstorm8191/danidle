@@ -98,9 +98,7 @@ class mudmaker extends activeblock {
     // activeblock function that generates the content
     $("#gamepanel").html('<center><b>Mud Maker</b></center><br /><br />'+
                          'Mixes water into dirt to make mud. Good for early ceramics<br /><br />'+
-                         'Priority: <img src="img/arrowleft.png" onclick="selectedblock.setpriority(-1)"> '+
-                         '<span id="sidepanelpriority">'+ this.priority +'</span> '+
-                         '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)"><br />'+
+                         this.displaypriority() +'<br />'+
                          'Water cups stored: <span id"sidepanelcup">'+ this.watercup.length +'</span><br />'+
                          'Dirt stored: <span id="sidepaneldirt">'+ this.dirt.length +'</span><br />'+
                          'Progress: <span id="sidepanelprogress">'+ Math.floor((this.counter/5.0)*100) +'</span>%<br />'+

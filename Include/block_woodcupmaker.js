@@ -92,9 +92,7 @@ class woodcupmaker extends activeblock {
     // activeblock function that generates the content
     $("#gamepanel").html('<center><b>Wooden Cup Maker</b></center><br /><br />'+
                          'Cuts a log into a wooden cup. Useful for holding liquids (like water)<br /><br />'+
-                         'Priority: <img src="img/arrowleft.png" onclick="selectedblock.setpriority(-1)"> '+
-                         '<span id="sidepanelpriority">'+ this.priority +'</span> '+
-                         '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)"><br />'+
+                         this.displaypriority() +'<br />'+
                          'Logs stored: <span id="panellogs">'+ this.log.length +'</span><br />'+
                          'Progress: <span id="panelprogress">'+ (Math.floor(this.counter/10.0)*100) +'</span><br />'+
                          'Cups stored: <span id="panelstock">'+ this.onhand.length +'</span><br />'+

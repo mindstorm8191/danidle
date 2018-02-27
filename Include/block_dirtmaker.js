@@ -81,9 +81,7 @@ class dirtmaker extends activeblock {
     // activeblock functino that generates the content
     $("#gamepanel").html('<center><b>Dirt Maker</b></center><br /><br />'+
                          'Uses a shovel to collect blocks of dirt. Requires tools (at least a wooden shovel) to function<br /><br />'+
-                         'Priority: <img src="img/arrowleft.png" onclick="selectedblock.setpriority(-1)"> '+
-                         '<span id="sidepanelpriority">'+ this.priority +'</span> '+
-                         '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)"><br />'+
+                         this.displaypriority() +'<br />'+
                          'Progress: <span id="panelprogress">'+ Math.floor((this.counter/8.0)*100) +'</span>%<br />'+
                          'Dirt stored: <span id="panelstock">'+ this.onhand.length +'</span><br />'+
                          '<a href="#" onclick="selectedblock.deleteblock()">Delete Block</a><br /><br />'+

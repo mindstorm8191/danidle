@@ -127,9 +127,7 @@ class bucketline extends activeblock {
     $("#gamepanel").html('<center><b>Bucket-line Item Mover</b><center><br />'+
                          'Place between item source and target to move items.  Can be set to manage where items flow to & from. This will be your most '+
                          'flexible item flow tool, but will always require a worker.<br /><br />'+
-                         'Priority: <img src="img/arrowleft.png" onclick="selectedblock.setpriority(-1)"> '+
-                         '<span id="sidepanelpriority">'+ this.priority +'</span> '+
-                         '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)"><br />');
+                         this.displaypriority() +'<br />');
     if(this.onhand==null) {
       $("#gamepanel").append('Currently holding: <span id="itempanel">none</span>');
     }else{

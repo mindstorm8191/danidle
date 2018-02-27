@@ -11,14 +11,14 @@
   // Add buttons to the foraging post to decide if non-food things will be collected (such as seeds or flowers)
   
   // total project # of lines
-  // index                   block_clayformmaker     block_furnace          block_mudmaker     block_storage
+  // index                   block_clayformmaker     block_furnace          block_mudmaker         block_storage
   //     blocks                  block_dirtmaker         block_garbage          block_postmaker        block_twinemaker
   //         block_bucketline        block_firewood         block_gravelmaker       block_stickmaker       block_watercup
-  //             block_butchershop       block_flintfilter      block_huntingpost      block_stonecrusher     block_woodcupmaker
-  //                 block_campfire          block_flinttoolmaker   block_logmaker         block_stonefilter      block_woodpointspear
-  //                     block_claydryer         block_foragepost       block_minerspost       block_stonemaker      block_woodshovel
-  // 315+173+180+184+217+120+205+129+150+147+251+105+195+80+130+119+135+156+120+149+68+140+181+126+126+125+91+142+98+106 = 4463 lines!
-  
+  //             block_butchershop       block_flintfilter      block_huntingpost      block_stonecrusher      block_woodcupmaker
+  //                 block_campfire          block_flinttoolmaker   block_logmaker         block_stonefilter       block_woodpointspear
+  //                     block_claydryer         block_foragepost       block_minerspost       block_stonemaker       block_woodshovel
+  // 430+178+207+205+282+132+221+143+167+164+341+125+214+86+147+160+149+183+142+166+81+163+198+140+142+139+106+159+114+122 = 5206 lines!
+    
   // Population control - Determines how many human units on hand you have to manage
   // Factors affecting population
   //  Food on hand - If the player has enough food to feed everyone, the player will have positive population influence.  A variety of food sources will improve this as well (the more

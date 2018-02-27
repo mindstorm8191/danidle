@@ -102,9 +102,7 @@ class clayformmaker extends activeblock {
     $("#gamepanel").html('<center><b>Clay Form Maker</b></center><br /><br />'+
                          'Forms clay (and mud) into shapes that can be turned into solid objects (after drying)<br />'+
                          'Craftable items must be selected, and are dependent on input.<br /><br />'+
-                         'Priority: <img src="img/arrowleft.png" onclick="selectedblock.setpriority(-1)"> '+
-                         '<span id="sidepanelpriority">'+ this.priority +'</span> '+
-                         '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)"><br />'+
+                         this.displaypriority() +'<br />'+
                          'Output items on hand: '+ this.onhand.length +'<br /><br />'+
                          '<div id="sidepaneloutput"></div>');
     this.drawoutputlist();

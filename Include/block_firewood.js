@@ -99,9 +99,7 @@ class firewood extends activeblock {
     // activeblock functino that generates the content
     $("#gamepanel").html('<center><b>Firewood Maker</b></center><br /><br />'+
                          'Turns 1 log into 4 firewood.  Requires an axe.<br /><br />'+
-                         'Priority: <img src="img/arrowleft.png" onclick="selectedblock.setpriority(-1)"> '+
-                         '<span id="sidepanelpriority">'+ this.priority +'</span> '+
-                         '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)"><br />'+
+                         this.displaypriority() +'<br />'+
                          'Logs stored: <span id="panellogs">'+ this.log.length +'</span><br />'+
                          'Progress: <span id="panelprogress">'+ (Math.floor(this.counter/8.0)*100) +'</span>%<br />'+
                          'Firewood stored: <span id="panelstock">'+ this.onhand.length +'</span><br />'+

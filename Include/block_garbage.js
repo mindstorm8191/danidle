@@ -63,9 +63,7 @@ class garbage extends activeblock {
     $("#gamepanel").html('<center><b>Garbage Bin</b></center><br /><br />'+
                          'Accepts any item and destroys it; Useful for clearing space for more important things.  Requires 1 worker to dispose of the object. What '+
                          'they do with the object, nobody knows!<br /><br/>'+
-                         'Priority: <img src="img/arrowleft.png" onclick="selectedblock.setpriority(-1)"> '+
-                         '<span id="sidepanelpriority">'+ this.priority +'</span> '+
-                         '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)"><br />'+
+                         this.displaypriority() +'<br />'+
                          '<a href="#" onclick="selectedblock.deleteblock()">Delete Block</a>');
   }
   

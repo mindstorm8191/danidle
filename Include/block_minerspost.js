@@ -119,9 +119,7 @@ class minerspost extends activeblock {
     $("#gamepanel").html('<center><b>Miner\'s Post</b></center><br /><br />'+
                          'Digs deep underground to locate ore viens, then begins collecting all the ore from those veins. Requires pickaxes as tools. Also requires wood posts, '+ 
                          'torches and twine as input. Torches determine how long any miner can be underground. The deeper your mine, the more torches they will need.<br /><br />'+
-                         'Priority: <img src="img/arrowleft.png" onclick="selectedblock.setpriority(-1)"> '+
-                         '<span id="sidepanelpriority">'+ this.priority +'</span> '+
-                         '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)"><br />'+
+                         this.displaypriority() +'<br />'+
                          'Unused posts on hand: <span id="sidepanelposts">'+ this.woodpost.length +'</span><br />'+
                          'Torches on hand: <span id="sidepaneltorches">'+ this.torch.length +'</span><br />'+
                          'Unused twine on hand: <span id="sidepaneltwine">'+ this.twine.length +'</span><br />'+

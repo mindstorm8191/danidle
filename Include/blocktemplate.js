@@ -56,7 +56,8 @@ class blocknamehere extends activeblock {
   drawpanel() {
     // activeblock functino that generates the content
     $("#gamepanel").html('<center><b>block name here</b></center><br /><br />'+
-                         'Description of your block goes here');
+                         'Description of your block goes here'+
+                         this.displaypriority() +'<br />');
   }
   
   updatepanel() {
@@ -68,6 +69,7 @@ class blocknamehere extends activeblock {
     // activeblock function to manage regenerating the game while loading.  This is mostly used to re-instantiate items into object, as using localStorage and JSON doesn't
     // hold onto the class instances when re-generating classes.  Therefore we need to use Object.setPrototypeOf(targetobject, classname.prototype) on each block instance
     // (this is already done by here) and also any items this block contains.
-    // In this function, we also need to add any editable items back into the foods list array. 
+    // In this function, we also need to add any editable items back into the foods list array. Since the same food item was in two lists, we could not save the food list
+    // for later, so we regenerate it on load.
   }  
 }

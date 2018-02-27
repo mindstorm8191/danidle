@@ -127,9 +127,7 @@ class butchershop extends activeblock {
     // activeblock functino that generates the content
     $("#gamepanel").html('<center><b>Butcher Shop</b></center><br /><br />'+
                          'Butchers dead animals, turning them into useful raw meats and other products (such as bones and skins)'+
-                         'Priority: <img src="img/arrowleft.png" onclick="selectedblock.setpriority(-1)"> '+
-                         '<span id="sidepanelpriority">'+ this.priority +'</span> '+
-                         '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)"><br />'+
+                         this.displaypriority() +'<br />'+
                          'Work on hand: <span id="sidepanelinput">'+ this.input.length +'</span><br />'+
                          'Progress: <span id="sidepanelprogress">'+ (Math.floor((this.counter/this.processtime)*100)) +'</span>%<br />'+
                          'Output items: <span id="sidepanelstock">'+ this.onhand.length +'</span><br />'+

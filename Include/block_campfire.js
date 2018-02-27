@@ -200,9 +200,7 @@ class campfire extends activeblock {
     $("#gamepanel").html('<center><b>Camp Fire</b></center><br /><br />'+
                          'A place for meats to be cooked. Requires firewood (such as sticks) to function.  Fires must reach a temperature of 50 before it will'+
                          'start cooking meats, and increase cooking speed up to a temp of 200 (above 200 has no change in effect).<br /><br />'+
-                         'Priority: <img src="img/arrowleft.png" onclick="selectedblock.setpriority(-1)"> '+
-                         '<span id="sidepanelpriority">'+ this.priority +'</span> '+
-                         '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)"><br />'+
+                         this.displaypriority() +'<br />'+
                          'Fire temperature: <span id="sidepanelheat">'+ this.temp +'</span><br />');
     if(this.foodin.length>0) {
       var cooking = this.cooktime(this.foodin[0].name);

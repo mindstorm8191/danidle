@@ -75,9 +75,7 @@ class watercup extends activeblock {
     // activeblock functino that generates the content
     $("#gamepanel").html('<center><b>Water Cup Filler</b></center><br /><br />'+
                          'Fills wooden cups with water for other uses.  This only takes 1 unit of time<br /><br />'+
-                         'Priority: <img src="img/arrowleft.png" onclick="selectedblock.setpriority(-1)"> '+
-                         '<span id="sidepanelpriority">'+ this.priority +'</span> '+
-                         '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)"><br />'+
+                         this.displaypriority() +'<br />'+
                          'Cups on hand: <span id="sidepanelcup">'+ this.cup.length +'</span><br />'+
                          'Filled cups stored: <span id="sidepanelstock">'+ this.onhand.length +'</span><br />'+
                          '<a href="#" onclick="selectedblock.deleteblock()">Delete Block</a>');

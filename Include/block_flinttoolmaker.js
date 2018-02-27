@@ -257,9 +257,7 @@ class flinttoolmaker extends activeblock {
     // activeblock function that generates the content
     $("#gamepanel").html('<center><b>Flint Tools Maker</b></center><br /><br />'+
                          'Creates 1 of multiple types of flint tools. Select one below to get started. All tools require at least flint<br />'+
-                         'Priority: <img src="img/arrowleft.png" onclick="selectedblock.setpriority(-1)"> '+
-                         '<span id="sidepanelpriority">'+ this.priority +'</span> '+
-                         '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)"><br />'+
+                         this.displaypriority() +'<br />'+
                          'Flint on hand: <span id="sidepanelflint">'+ this.flint.length +'</span><br />'+
                          'Sticks on hand: <span id="sidepanelsticks">'+ this.stick.length +'</span><br />'+
                          'Twine on hand: <span id="sidepaneltwine">'+ this.twine.length +'</span><br />'+
