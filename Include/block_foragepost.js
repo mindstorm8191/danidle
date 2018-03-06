@@ -49,6 +49,10 @@ class foragepost extends activeblock {
 //    }
 //  }
   
+  getoutput(targetitem) {
+    return null;  // This block doesnt accept anything or output anything (yet... we can change this later)
+  }
+  
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
     

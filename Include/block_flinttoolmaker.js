@@ -72,9 +72,25 @@ class flinttoolmaker extends activeblock {
     }
   }
   
+  getoutput(targetitem) {
+    switch(targetitem) { // determine which item type of our list of options the other block wants
+      case 'flintknife': case 'flintshovel': case 'flintaxe': case 'flintpickaxe': case 'flinthammer': case 'torch': case 'flintpointspear':
+        for(var i=0; i<this.onhand.length; i++) { // Now determine if we have any matches
+          if(this.onhand[i].name==targetitem) {
+            var grab = this.onhand[i];
+            this.onhand.splice(i,1);
+            return grab;
+        } }
+      break;
+    }
+    return null;
+  }
+  
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
     if(this.onhand.length<10) {
+      var searchlist = [];  // Use this to determine what we should search for, after everything else is done. We would search for items with a private function,
+                            // but with an increasing number of blocks, getneighbor() will get increasingly slower. This way will limit the number of calls on that
       switch(this.currentoutput) {
         case '':  // no output selected.  Switch to a new task as soon as something else is selected
           this.currentoutput = this.targetoutput;
@@ -94,6 +110,7 @@ class flinttoolmaker extends activeblock {
             $("#"+ this.id +"progress").css({"width":(this.counter*6)});  // aka counter * 60/10
           }else{
             this.currentoutput = this.targetoutput;  // if we aren't producing anything, allow the user to change tool types.  Do this for all available tools 
+            searchlist.push('flint');
           }
         break;
         case 'flintshovel':  // Shovel. needs 3 flint & 3 sticks
@@ -114,12 +131,18 @@ class flinttoolmaker extends activeblock {
                 $("#"+ this.id +"progress").css({"width":(this.counter*5)}); // aka counter * 60/12
               }else{
                 this.currentoutput = this.targetoutput;  // if we aren't producing anything, allow the user to change tool types.  Do this for all tool types, and reasons for no progress
+                searchlist.push('twine');
               }
             }else{
-              this.currentoutput = this.targetoutput; 
+              this.currentoutput = this.targetoutput;
+              searchlist.push('stick');
+              if(this.twine.length<3) searchlist.push('twine');
             }
           }else{
             this.currentoutput = this.targetoutput;
+            searchlist.push('flint');
+            if(this.stick.length<3) searchlist.push('stick');
+            if(this.twine.length<3) searchlist.push('twine');
           }
         break;
         case 'flintaxe':  // Axe.  Needs 4 flint & 3 sticks
@@ -140,12 +163,18 @@ class flinttoolmaker extends activeblock {
                 $("#"+ this.id +"progress").css({"width":(this.counter*5)}); // aka counter * 60/12
               }else{
                 this.currentoutput = this.targetoutput;
+                searchlist.push('twine');
               }
             }else{
               this.currentoutput = this.targetoutput;
+              searchlist.push('stick');
+              if(this.twine.length<3) searchlist.push('twine');
             }
           }else{
             this.currentoutput = this.targetoutput;
+            searchlist.push('flint');
+            if(this.stick.length<3) searchlist.push('stick');
+            if(this.twine.length<3) searchlist.push('twine');
           }
         break;
         case 'flintpickaxe':  // Pickaxe.  Needs 6 flint & 3 sticks
@@ -166,12 +195,18 @@ class flinttoolmaker extends activeblock {
                 $("#"+ this.id +"progress").css({"width":(this.counter*5)}); // aka counter * 60/12
               }else{
                 this.currentoutput = this.targetoutput;
+                searchlist.push('twine');
               }
             }else{
               this.currentoutput = this.targetoutput;
+              searchlist.push('stick');
+              if(this.twine.length<4) searchlist.push('twine');
             }
           }else{
             this.currentoutput = this.targetoutput;
+            searchlist.push('flint');
+            if(this.stick.length<3) searchlist.push('stick');
+            if(this.twine.length<4) searchlist.push('twine');
           }
         break;
         case 'flinthammer':  // Hammer. Needs 9 flint & 3 sticks
@@ -192,12 +227,18 @@ class flinttoolmaker extends activeblock {
                 $("#"+ this.id +"progress").css({"width":(this.counter*5)}); // aka counter * 60/12
               }else{
                 this.currentoutput = this.targetoutput;
+                searchlist.push('twine');
               }
             }else{
               this.currentoutput = this.targetoutput;
+              searchlist.push('stick');
+              if(this.twine.length<4) searchlist.push('twine');
             }
           }else{
             this.currentoutput = this.targetoutput;
+            searchlist.push('flint');
+            if(this.stick.length<3) searchlist.push('stick');
+            if(this.twine.length<4) searchlist.push('twine');
           }
         break;
         case 'torch': // Torch. Only needs 1 stick and 2 twine
@@ -217,9 +258,12 @@ class flinttoolmaker extends activeblock {
               $("#"+ this.id +"progress").css({"width":(this.counter*7.5)}); // aka counter * 60/8
             }else{
               this.currentoutput = this.targetoutput;
+              searchlist.push('twine');
             }
           }else{
             this.currentoutput = this.targetoutput;
+            searchlist.push('stick');
+            if(this.twine.length<4) searchlist.push('twine');
           }
         break;
         case 'flintpointspear':  // Flint spear. Lasts longer than a wood spear, but isn't any more effective at killing animals. Needs 1 stick, 2 flint and 2 twine
@@ -241,15 +285,36 @@ class flinttoolmaker extends activeblock {
                 $("#"+ this.id +"progress").css({"width":(this.counter*6)}); // aka counter * 60/10
               }else{
                 this.currentoutput = this.targetoutput;
+                searchlist.push('twine');
               }
             }else{
               this.currentoutput = this.targetoutput;
+              searchlist.push('flint');
+              if(this.twine.length<2) searchlist.push('twine');
             }
           }else{
             this.currentoutput = this.targetoutput;
+            searchlist.push('stick');
+            if(this.flint.length<2) searchlist.push('flint');
+            if(this.twine.length<2) searchlist.push('twine');
           }
         break;
       }
+      if(searchlist.length>0) {  // We had at least 1 thing added to our list of things to search for
+        for(var i=0; i<4; i++) {
+          var neighbor = this.getneighbor(i);
+          if(neighbor!=null) {
+            for(var j=0; j<searchlist.length; j++) {
+              var pickup = neighbor.getoutput(searchlist[j]);
+              if(pickup!=null) {
+                switch(searchlist[j]) {  // now that we have something, figure out what to put it in
+                  case 'flint': this.flint.push(pickup); break;
+                  case 'twine': this.twine.push(pickup); break;
+                  case 'stick': this.stick.push(pickup); break;
+                }
+                i=5;
+                j=searchlist.length+1;
+      } } } } }
     }
   }
   

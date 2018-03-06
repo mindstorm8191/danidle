@@ -59,12 +59,27 @@ class flintfilter extends activeblock {
     }
   }
   
+  getoutput(targetitem) {
+    // Returns an item here of the targetitem type, or null if it is not here
+    switch(targetitem) {
+      case 'gravel': case 'flint':
+        for(var i=0; i<this.onhand.length; i++) {
+          if(this.onhand[i].name==targetitem) {
+            var grab = this.onhand[i];
+            this.onhand.splice(i,1);
+            return grab;
+        } }
+      break;
+    }
+    return null;
+  }
+  
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
     
     if(this.shovel!=null) {  // this does not load a shovel right when the block starts.  The user will have to select the block and load one in
-      if(this.onhand.length<15) {
-        if(this.rawgravel.length>=5) {  // need at least 5 gravel on hand before starting
+      if(this.rawgravel.length>=5) {  // need at least 5 gravel on hand before starting
+        if(this.onhand.length<15) {
           if(workpoints>=1) {
             workpoints--;
             this.counter+= this.shovel.efficiency;
@@ -82,7 +97,16 @@ class flintfilter extends activeblock {
               this.rawgravel.splice(0,5); // deletes 5 items
         } } }
         $("#"+ this.id +"progress").css({"width":(this.counter*4)});  // aka counter * (60/15)
-      }
+      }else{
+        // Not enough raw gravel on hand.  Search nearby for more
+        for(var i=0; i<4; i++) {
+          var neighbor = this.getneighbor(i);
+          if(neighbor!=null) {
+            var pickup = neighbor.getoutput('rawgravel');
+            if(pickup!=null) {
+              this.rawgravel.push(pickup);
+              i=5;
+      } } } }
     }else{
       if(this.targetshovel!='') {
         this.shovel = blocklist.findinstorage(this.targetshovel, 1);

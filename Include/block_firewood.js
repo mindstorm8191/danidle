@@ -62,6 +62,10 @@ class firewood extends activeblock {
     }
   }
   
+  getoutput(targetitem) {
+    if(targetitem=='firewood') return this.outputitem();
+  }
+  
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
     
@@ -86,7 +90,18 @@ class firewood extends activeblock {
               this.onhand.push(new item('firewood'));
               this.onhand.push(new item('firewood'));
               this.onhand.push(new item('firewood'));
-      } } } }
+        } } }
+      }else{
+        // No material on hand.  Search for some now
+        for(var i=0; i<4; i++) {
+          var neighbor = this.getneighbor(i);
+          if(neighbor!=null) {
+            var pickup = neighbor.getoutput('log');
+            if(pickup!=null) {
+              this.log.push(pickup);
+              i=5;
+        } } }
+      }
       $("#"+ this.id +"progress").css({"width":(this.counter*7.5)});  // aka 60/8
     }else{
       if(this.targetaxe!='') {

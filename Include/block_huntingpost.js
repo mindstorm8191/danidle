@@ -52,6 +52,21 @@ class huntingpost extends activeblock {
     }
   }
   
+  getoutput(targetitem) {
+    // Outputs a target item, if it exists here
+    switch(targetitem) {
+      case 'deaddeer': case 'deadchicken': case 'deadwolf':
+        for(var i=0; i<this.onhand.length; i++) { // Now try to find the correct item in our output list
+          if(this.onhand[i].name == targetitem) {
+            var grab = this.onhand[i];
+            this.onhand.splice(i,1);
+            return grab;
+        } }
+      break;
+    }
+    return null;
+  }
+  
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
     

@@ -37,6 +37,11 @@ class activeblock {
     return null;
   }
   
+  getoutput(targetitem) {
+    // Another backup function. Should return an item searched for, or null if the block does not output it.
+    console.log('New block ('+ this.name+') still needs a getoutput() function');
+  }
+  
   update() {
     // Backup for the update function.  Each activeblock type should have its own update function and fully override this one.
     console.log('New block ('+ this.name +') still needs an update() function');

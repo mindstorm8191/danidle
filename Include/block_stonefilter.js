@@ -67,6 +67,12 @@ class stonefilter extends activeblock {
     }
   }
   
+  getoutput(targetitem) {
+    // returns a target output item, or null if it isn't here
+    
+    // or... this block hasn't been completed yet (and may / may not be used later)
+  }
+  
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
     

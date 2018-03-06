@@ -27,7 +27,7 @@ class stickmaker extends activeblock {
     }
     return '';
   }
-
+  
   outputitem() {
     // Outputs an item, if possible
     if(this.onhand.length>0) {
@@ -36,6 +36,12 @@ class stickmaker extends activeblock {
       return grab;
     }
     return null;
+  }
+  
+  getoutput(target) {
+    // Returns a specific item that is marked as output for this block, or null if no item of that type was available.
+    
+    if(target=='stick') return this.outputitem(); // why rewrite what works?
   }
   
   update() {

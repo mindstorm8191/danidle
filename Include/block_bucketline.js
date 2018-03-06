@@ -64,6 +64,10 @@ class bucketline extends activeblock {
     return null;
   }
   
+  getoutput(target) {
+    return null;
+  }
+  
   update() {
     if(workpoints>=1) {
       var triggered = 0;  // this is used to show when the mover puts down an item somewhere and has nothing else to pick up

@@ -73,9 +73,25 @@ class minerspost extends activeblock {
     }
   }
   
+  getoutput(targetitem) {
+    // Returns a specific output item, if it is available
+    switch(targetitem) {
+      case 'rawstone': case 'copperorestone':
+        for(var i=0; i<this.onhand.length; i++) {
+          if(this.onhand[i].name == targetitem) {
+            var grab = this.onhand[i];
+            this.onhand.splice(i,1);
+            return grab;
+        } }
+      break;
+    }
+    return null;
+  }
+  
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
     if(this.pickaxe!=null) {
+      var itemsneeded = [];
       if(this.onhand.length<20) {
         if(this.woodpost.length>=1) {
           if(this.torch.length>=1) {
@@ -107,7 +123,36 @@ class minerspost extends activeblock {
                       this.levelprogress -= 20;
                 } } }
                 $("#"+ this.id +"progress").css({"width":(this.counter*3.333333)}); // aka counter * 60/18
-      } } } } }
+              }
+            }else{
+              itemsneeded.push('twine');
+            }
+          }else{
+            itemsneeded.push('torch');
+            if(this.twine.length<1) itemsneeded.push('twine');
+          }
+        }else{
+          itemsneeded.push('woodpost');
+          if(this.torch.length<1) itemsneeded.push('torch');
+          if(this.twine.length<1) itemsneeded.push('twine');
+        }
+          // Now take our itemsneeded list and see if we can grab any items from nearby sources
+        if(itemsneeded.length>0) {
+          for(var i=0; i<4; i++) {
+            var neighbor = this.getneighbor(i);
+            if(neighbor!=null) {
+              for(var j=0; j<itemsneeded.length; j++) {
+                var pickup = neighbor.getoutput(itemsneeded[j]);
+                if(pickup !=null) {
+                  switch(itemsneeded[j]) {  // now that we have something... what is it? Figure out what it is so we can put it in the right list
+                    case 'woodpost': this.woodpost.push(pickup); break;
+                    case 'torch':    this.torch.push(pickup);    break;
+                    case 'twine':    this.twine.push(pickup);    break;
+                  }
+                  i=5;
+                  j=itemsneeded.length;  // now exit the loops early
+        } } } } }
+      }
     }else{
       // no pickaxe loaded.  Let's grab one now (if one is selected)
       this.pickaxe = blocklist.findinstorage(this.targetpickaxe, 1);  // if target pickaxe is a null string, this will already return null
@@ -117,6 +162,9 @@ class minerspost extends activeblock {
   drawpanel() {
     // activeblock function that generates the content
     $("#gamepanel").html('<center><b>Miner\'s Post</b></center><br /><br />'+
+                         'So, you want to get metal ores? But you cannot get through the rocks to reach the ores. And you have no pickaxe, or metal to even make one. Such a '+
+                         'predicament! But there is a way; heat the rocks with fire, then pour cold water over it. The temperature shift will crumble even the toughest of '+
+                         'rocks!<br /><br />'+
                          'Digs deep underground to locate ore viens, then begins collecting all the ore from those veins. Requires pickaxes as tools. Also requires wood posts, '+ 
                          'torches and twine as input. Torches determine how long any miner can be underground. The deeper your mine, the more torches they will need.<br /><br />'+
                          this.displaypriority() +'<br />'+

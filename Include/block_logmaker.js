@@ -52,6 +52,13 @@ class logmaker extends activeblock {
     }
   }
   
+  getoutput(targetitem) {
+    // Returns a specific target item from this block
+    if(targetitem=='log') {
+      return this.outputitem();
+    }
+  } 
+  
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
     if(this.axe!=null) {

@@ -44,7 +44,7 @@ class woodpointspear extends activeblock {
     }
     return '';
   }
-
+  
   outputitem() {
     // activeblock function that returns the actual item to be collected by the calling block.  Be sure to delete access to the item while doing this
     // This code below is generally all that's needed to manage this
@@ -58,11 +58,18 @@ class woodpointspear extends activeblock {
     }
   }
   
+  getoutput(target) {
+    // Returns a specific item that is marked as output for this block, or null if no item of that type was available.
+    
+    if(target=='woodpointspear') return this.outputitem();
+  }
+
+  
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
-    if(workpoints>=1) {
-      if(this.stick.length>0) {
-        if(this.onhand.length<10) {
+    if(this.stick.length>0) {
+      if(this.onhand.length<10) {
+        if(workpoints>=1) {
           this.counter++;
           workpoints--;
           if(this.counter>10) {
@@ -72,7 +79,19 @@ class woodpointspear extends activeblock {
             findunlocks('woodpointspear');
           }
           $("#"+ this.id +"progress").css({"width":(this.counter*6)}); // aka 60/10
-    } } }
+      } }
+    }else{
+      // No sticks on hand.  Search nearby blocks for one
+      for(var i=0; i<4; i++) {
+        var neighbor = this.getneighbor(i);
+        if(neighbor!=null) {
+          var pickup = neighbor.getoutput('stick');
+          if(pickup!=null) {
+            this.stick.push(pickup);
+            i = 5;  // exit this loop now
+        } }
+      }
+    }
   }
   
   drawpanel() {

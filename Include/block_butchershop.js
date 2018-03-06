@@ -68,6 +68,23 @@ class butchershop extends activeblock {
       return null;
     }
   }
+  
+  getoutput(targetitem) {
+    // Returns a specific item that is marked as output for this block, or null if no item of that type was available.
+    
+    switch(targetitem) {
+      case 'rawdeermeat': case 'rawwolfmeat': case 'rawchickenmeat': case 'bone': case 'animalskin': case 'feather':
+        // Unlike other blocks that have 1 output, we will need to sift though the items stored here to see if we can output the target item
+        for(var i=0; i<this.onhand.length; i++) {
+          if(this.onhand[i].name==targetitem) {
+            var grab = this.onhand[i];
+            this.onhand.splice(i,1);
+            return grab;
+        } }
+      break;
+    }
+    return null;
+  }
 
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
@@ -119,7 +136,20 @@ class butchershop extends activeblock {
               this.input.splice(0,1);  // splice out the input item
             }
             $("#"+ this.id +"progress").css({"width":(this.counter*60 / this.processtime())});
-      } } }
+        } }
+      }else{
+        // Nothing to work on.  Search nearby for something to collect
+        var targetlist = ['deaddeer', 'deadwolf', 'deadchicken'];
+        for(var i=0; i<4; i++) {
+          var neighbor = this.getneighbor(i);
+          if(neighbor!=null) {
+            for(var j=0; j<targetlist.length; j++) {
+              var pickup = neighbor.getoutput(targetlist[j]);
+              if(pickup!=null) {
+                this.input.push(pickup);
+                i = 5; j = 4;  // exit both loops now
+        } } } }
+      }
     }
   }
   
@@ -160,7 +190,7 @@ class butchershop extends activeblock {
     // (this is already done by here) and also any items this block contains.
     // In this function, we also need to add any editable items back into the foods list array.
     
-    if(this.knife!=null) Object.setPrototypeOf(this.knife. item.prototype);  // the tool's storage source is an ID number of the target block... so this is already data-loop safe
+    if(this.knife!=null) Object.setPrototypeOf(this.knife, item.prototype);  // the tool's storage source is an ID number of the target block... so this is already data-loop safe
     for(var i=0; i<this.input.length; i++) {
       Object.setPrototypeOf(this.input[i], item.prototype);
     }

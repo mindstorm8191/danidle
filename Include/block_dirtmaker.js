@@ -52,6 +52,10 @@ class dirtmaker extends activeblock {
     }
   }
   
+  getoutput(targetitem) {
+    if(targetitem=='dirt') return this.outputitem();  // The easy solution...
+  }
+  
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
     if(this.shovel!=null) {  // this does not load a shovel right when the block starts.  The user will have to select the block and load one in

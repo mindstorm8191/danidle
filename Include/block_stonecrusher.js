@@ -15,7 +15,7 @@ class stonecrusher extends activeblock {
     // returns 1 if accepted, 0 if not
     if(this.input.length<8) {
       switch(item.name) {
-        case 'stone': return 1;
+        case 'rawstone': return 1;
         case 'copperorestone': return 1;
       }
     }
@@ -26,7 +26,7 @@ class stonecrusher extends activeblock {
     // activeblock function to receive an actual item (as an object) from another source.
     
     switch(item.name) {
-      case 'stone': case 'copperorestone':
+      case 'rawstone': case 'copperorestone':
         this.input.push(item);
       break;
       default:
@@ -65,6 +65,22 @@ class stonecrusher extends activeblock {
     }
   }
   
+  getoutput(targetitem) {
+    // Returns a target output item, or null if it isn't here
+    
+    switch(targetitem) {
+      case 'crushedstone':  case 'crushedcopperore':
+        for(var i=0; i<this.onhand.length; i++) {
+          if(this.onhand[i].name==targetitem) {
+            var grab = this.onhand[i];
+            this.onhand.splice(i,1);
+            return grab;
+        } }
+      break;
+    }
+    return null;
+  }
+  
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
     if(this.hammer==null) {
@@ -72,8 +88,8 @@ class stonecrusher extends activeblock {
         this.hammer = blocklist.findinstorage(this.targethammer, 1);
       }
     }else{
-      if(this.onhand.length<5) {
-        if(this.input.length>0) {
+      if(this.input.length>0) {
+        if(this.onhand.length<5) {
           if(workpoints>=1) {
             workpoints--;
             this.counter += this.hammer.efficiency;
@@ -84,13 +100,28 @@ class stonecrusher extends activeblock {
             if(this.counter>12) {
               this.counter-=12;
               switch(this.input[0].name) {
-                case 'stone': this.onhand.push(new item('crushedstone')); break;
+                case 'rawstone': this.onhand.push(new item('crushedstone')); break;
                 case 'copperorestone': this.onhand.push(new item('crushedcopperore')); break;
               }
               this.input.splice(0,1); // delete one of the stones
             }
             $("#"+ this.id +"progress").css({"width":(this.counter*5)}); // aka 60/12
-    } } } }
+        } }
+      }else{
+        // Nothing input is here. Let's find something to grab
+        for(var i=0; i<4; i++) {
+          var neighbor = this.getneighbor(i);
+          if(neighbor!=null) {
+            var pickup = neighbor.getoutput('rawstone');
+            if(pickup!=null) {
+              this.input.push(pickup);
+              i=5;
+            }else{
+              pickup = neighbor.getoutput('copperorestone');
+              if(pickup!=null) {
+                this.input.push(pickup);
+                i=5;
+    } } } } } }
   }
   
   drawpanel() {
