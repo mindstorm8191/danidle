@@ -1,7 +1,7 @@
 class storage extends activeblock {
   constructor(gridx, gridy) {
     super(gridx, gridy);
-    this.name = 'Storage';
+    this.name = 'storage';
     this.onhand = [];
     this.outputstatus = 0;  // user can determine if a given item can be output or not.
     this.drawgameblock('img/storage.png', 1);  // we will use the scrollbar to represent the unit's remaining capacity
@@ -109,6 +109,22 @@ class storage extends activeblock {
     }else{
       $("#storagecontent").html(this.onhand[0].name +' x'+ this.onhand.length);
     }
+  }
+  
+  reload() {
+    // activeblock function to manage regenerating the game while loading.  This is mostly used to re-instantiate items into object, as using localStorage and JSON doesn't
+    // hold onto the class instances when re-generating classes.  Therefore we need to use Object.setPrototypeOf(targetobject, classname.prototype) on each block instance
+    // (this is already done by here) and also any items this block contains.
+    // In this function, we also need to add any editable items back into the foods list array.
+    
+    for(var i=0; i<this.onhand.length; i++) {
+      Object.setPrototypeOf(this.onhand[i], item.prototype);
+      switch(this.onhand[i].name) { // Also account for any foods that might be here
+       case 'apple': case 'berry': case 'treenut': case 'mushroom': case 'deermeat': case 'wolfmeat': case 'chickenmeat': // we don't have much food yet...
+         foodlist.push(this.onhand[i]);
+    } }
+    this.drawgameblock('img/storage.png', 1);
+      // We're not yet using the progress bar; I think we'll use it for denoting the used capacity though
   }
   
   togglestatus() {

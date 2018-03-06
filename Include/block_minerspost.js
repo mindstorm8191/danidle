@@ -1,7 +1,7 @@
 class minerspost extends activeblock {
   constructor(gridx, gridy) {
     super(gridx, gridy);
-    this.name = 'Miners Post';
+    this.name = 'minerspost';
     this.woodpost = [];   // list of wood posts not yet used in the mine
     this.torch = [];      // list of torchest not yet used in the mine
     this.twine = [];      // list of twine not yet used.  Twine is used to haul the stones out of the mine
@@ -72,7 +72,7 @@ class minerspost extends activeblock {
       return null;
     }
   }
-
+  
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
     if(this.pickaxe!=null) {
@@ -119,9 +119,7 @@ class minerspost extends activeblock {
     $("#gamepanel").html('<center><b>Miner\'s Post</b></center><br /><br />'+
                          'Digs deep underground to locate ore viens, then begins collecting all the ore from those veins. Requires pickaxes as tools. Also requires wood posts, '+ 
                          'torches and twine as input. Torches determine how long any miner can be underground. The deeper your mine, the more torches they will need.<br /><br />'+
-                         'Priority: <img src="img/arrowleft.png" onclick="selectedblock.setpriority(-1)"> '+
-                         '<span id="sidepanelpriority">'+ this.priority +'</span> '+
-                         '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)"><br />'+
+                         this.displaypriority() +'<br />'+
                          'Unused posts on hand: <span id="sidepanelposts">'+ this.woodpost.length +'</span><br />'+
                          'Torches on hand: <span id="sidepaneltorches">'+ this.torch.length +'</span><br />'+
                          'Unused twine on hand: <span id="sidepaneltwine">'+ this.twine.length +'</span><br />'+
@@ -141,7 +139,7 @@ class minerspost extends activeblock {
     // activeblock function to update the panel once per tick
     $("#sidepanelposts").html(this.woodpost.length);
     $("#sidepaneltorches").html(this.torch.length);
-    $("#sidepaneltwince").html(this.twine.length);
+    $("#sidepaneltwine").html(this.twine.length);
     $("#sidepaneldepth").html(this.depth);
     $("#sidepanellevelprogress").html(this.levelprogress);
     $("#sidepanelprogress").html(Math.floor((this.counter/18.0)*100));
@@ -151,6 +149,29 @@ class minerspost extends activeblock {
       $("#sidepanelactivetool").html(this.pickaxe.name +' ('+ (Math.floor((this.pickaxe.endurance / this.pickaxe.totalendurance)*100)) +'% health)');
     }
     this.updatetoollist(this.targetpickaxe, ['flintpickaxe']);
+  }
+  
+  reload() {
+    // activeblock function to manage regenerating the game while loading.  This is mostly used to re-instantiate items into object, as using localStorage and JSON doesn't
+    // hold onto the class instances when re-generating classes.  Therefore we need to use Object.setPrototypeOf(targetobject, classname.prototype) on each block instance
+    // (this is already done by here) and also any items this block contains.
+    // In this function, we also need to add any editable items back into the foods list array.
+    
+    if(this.pickaxe!=null) Object.setPrototypeOf(this.pickaxe, item.prototype);
+    for(var i=0; i<this.woodpost.length; i++) {
+      Object.setPrototypeOf(this.woodpost[i], item.prototype);
+    }
+    for(var i=0; i<this.torch.length; i++) {
+      Object.setPrototypeOf(this.torch[i], item.prototype);
+    }
+    for(var i=0; i<this.twine.length; i++) {
+      Object.setPrototypeOf(this.twine[i], item.prototype);
+    }
+    for(var i=0; i<this.onhand.length; i++) {
+      Object.setPrototypeOf(this.onhand[i], item.prototype);
+    }
+    this.drawgameblock('img/minerspost.png', 1);
+    $("#"+ this.id +"progress").css({"width":(this.counter*3.333333)});
   }
   
   picktool(newpickaxe) {

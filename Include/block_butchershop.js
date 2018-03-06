@@ -1,7 +1,7 @@
 class butchershop extends activeblock {
   constructor(gridx, gridy) {
     super(gridx, gridy);
-    this.name = 'Butcher Shop';
+    this.name = 'butchershop';
     this.input = [];      // array holding everything received so far
     this.onhand = [];     // array of anything this block is holding, usually for output
     this.counter = 0;     // how much progress has been made for the current operation
@@ -55,7 +55,7 @@ class butchershop extends activeblock {
     }
     return '';
   }
-
+  
   outputitem() {
     // activeblock function that returns the actual item to be collected by the calling block.  Be sure to delete access to the item while doing this
     // This code below is generally all that's needed to manage this
@@ -127,9 +127,7 @@ class butchershop extends activeblock {
     // activeblock functino that generates the content
     $("#gamepanel").html('<center><b>Butcher Shop</b></center><br /><br />'+
                          'Butchers dead animals, turning them into useful raw meats and other products (such as bones and skins)'+
-                         'Priority: <img src="img/arrowleft.png" onclick="selectedblock.setpriority(-1)"> '+
-                         '<span id="sidepanelpriority">'+ this.priority +'</span> '+
-                         '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)"><br />'+
+                         this.displaypriority() +'<br />'+
                          'Work on hand: <span id="sidepanelinput">'+ this.input.length +'</span><br />'+
                          'Progress: <span id="sidepanelprogress">'+ (Math.floor((this.counter/this.processtime)*100)) +'</span>%<br />'+
                          'Output items: <span id="sidepanelstock">'+ this.onhand.length +'</span><br />'+
@@ -154,6 +152,23 @@ class butchershop extends activeblock {
       $("#sidepanelactivetool").html(this.knife.name +' ('+ (Math.floor((this.knife.endurance / this.knife.totalendurance)*100)) +'% health)');
     }
     this.updatetoollist(this.targetknife, ['flintknife']);
+  }
+  
+  reload() {
+    // activeblock function to manage regenerating the game while loading.  This is mostly used to re-instantiate items into object, as using localStorage and JSON doesn't
+    // hold onto the class instances when re-generating classes.  Therefore we need to use Object.setPrototypeOf(targetobject, classname.prototype) on each block instance
+    // (this is already done by here) and also any items this block contains.
+    // In this function, we also need to add any editable items back into the foods list array.
+    
+    if(this.knife!=null) Object.setPrototypeOf(this.knife. item.prototype);  // the tool's storage source is an ID number of the target block... so this is already data-loop safe
+    for(var i=0; i<this.input.length; i++) {
+      Object.setPrototypeOf(this.input[i], item.prototype);
+    }
+    for(var i=0; i<this.onhand.length; i++) {
+      Object.setPrototypeOf(this.onhand[i], item.prototype);
+    }
+    this.drawgameblock('img/butcher.png', 1);
+    $("#"+ this.id +"progress").css({"width":(this.counter*60 / this.processtime())});
   }
   
   picktool(newtool) {

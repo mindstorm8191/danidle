@@ -1,7 +1,7 @@
 class stonefilter extends activeblock {
   constructor(gridx, gridy) {
     super(gridx, gridy);
-    this.name = 'Stone Filter';
+    this.name = 'stonefilter';
     this.onhand = []; // array of anything this block is holding, usually for output
     this.stone = [];  // this needs to be crushed stone, not normal stone
     this.counter = 0;
@@ -66,7 +66,7 @@ class stonefilter extends activeblock {
       return null;
     }
   }
-
+  
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
     
@@ -110,9 +110,7 @@ class stonefilter extends activeblock {
     $("#gamepanel").html('<center><b>Stone Filter</b></center><br /><br />'+
                          'Filters ores out of crushed stone (not solid stone).  The ore to output is selected by the buttons below.  Multiple ore types can be filtered out of the '+
                          'same pile of crushed stone by daisy-chaining filters.<br /><br />'+
-                         'Priority: <img src="img/arrowleft.png" onclick="selectedblock.setpriority(-1)"> '+
-                         '<span id="sidepanelpriority">'+ this.priority +'</span> '+
-                         '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)"><br />'+
+                         this.displaypriority() +'<br />'+
                          'Progress: <span id="sidepanelprogress">'+ Math.floor((this.counter/15.0)*100) +'</span>%<br />'+
                          'Crushed stone stored: <span id="sidepanelstone">'+ this.stone.length +'</span><br />'+
                          'Output items: <span id="sidepanelstock">'+ this.onhand.length +'</span><br />'+
@@ -157,6 +155,23 @@ class stonefilter extends activeblock {
       $("#sidepanelactivetool").html(this.shovel.name +' ('+ (Math.floor((this.shovel.endurance / this.shovel.totalendurance)*100)) +'% health)');
     }
     this.displaytoollist(this.targetshovel, ['woodshovel', 'flintshovel']);
+  }
+  
+  reload() {
+    // activeblock function to manage regenerating the game while loading.  This is mostly used to re-instantiate items into object, as using localStorage and JSON doesn't
+    // hold onto the class instances when re-generating classes.  Therefore we need to use Object.setPrototypeOf(targetobject, classname.prototype) on each block instance
+    // (this is already done by here) and also any items this block contains.
+    // In this function, we also need to add any editable items back into the foods list array.
+    
+    if(this.shovel!=null) Object.setPrototypeOf(this.shovel, item.prototype);
+    for(var i=0; i<this.stone.length; i++) {
+      Object.setPrototypeOf(this.stone[i], item.prototype);
+    }
+    for(var i=0: i<this.onhand.length; i++) {
+      Object.setPrototypeOf(this.onhand[i], item.prototype);
+    }
+    this.drawgameblock('img/filter_stone.png', 1);
+    $("#"+ this.id +"progress").css({"width":(this.counter*4)});
   }
   
   picktool(newshovelname) {

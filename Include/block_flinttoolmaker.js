@@ -1,7 +1,7 @@
 class flinttoolmaker extends activeblock {
   constructor(gridx, gridy) {
     super(gridx, gridy);
-    this.name = 'Flint Tools maker';
+    this.name = 'flinttoolmaker';
     this.flint = [];      // Flints on hand
     this.stick = [];      // Sticks on hand
     this.twine = [];      // Twine on hand
@@ -71,7 +71,7 @@ class flinttoolmaker extends activeblock {
       return null;
     }
   }
-
+  
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
     if(this.onhand.length<10) {
@@ -257,9 +257,7 @@ class flinttoolmaker extends activeblock {
     // activeblock function that generates the content
     $("#gamepanel").html('<center><b>Flint Tools Maker</b></center><br /><br />'+
                          'Creates 1 of multiple types of flint tools. Select one below to get started. All tools require at least flint<br />'+
-                         'Priority: <img src="img/arrowleft.png" onclick="selectedblock.setpriority(-1)"> '+
-                         '<span id="sidepanelpriority">'+ this.priority +'</span> '+
-                         '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)"><br />'+
+                         this.displaypriority() +'<br />'+
                          'Flint on hand: <span id="sidepanelflint">'+ this.flint.length +'</span><br />'+
                          'Sticks on hand: <span id="sidepanelsticks">'+ this.stick.length +'</span><br />'+
                          'Twine on hand: <span id="sidepaneltwine">'+ this.twine.length +'</span><br />'+
@@ -286,6 +284,28 @@ class flinttoolmaker extends activeblock {
     $("#sidepaneltwine").html(this.twine.length);
     $("#sidepanelprogress").html(Math.floor((this.counter/this.timetocomplete())*100));
     $("#sidepanelonhand").html(this.onhand.length);
+  }
+  
+  reload() {
+    // activeblock function to manage regenerating the game while loading.  This is mostly used to re-instantiate items into object, as using localStorage and JSON doesn't
+    // hold onto the class instances when re-generating classes.  Therefore we need to use Object.setPrototypeOf(targetobject, classname.prototype) on each block instance
+    // (this is already done by here) and also any items this block contains.
+    // In this function, we also need to add any editable items back into the foods list array.
+    
+    for(var i=0; i<this.flint.length; i++) {
+      Object.setPrototypeOf(this.flint[i], item.prototype);
+    }
+    for(var i=0; i<this.stick.length; i++) {
+      Object.setPrototypeOf(this.stick[i], item.prototype);
+    }
+    for(var i=0; i<this.twine.length; i++) {
+      Object.setPrototypeOf(this.twine[i], item.prototype);
+    }
+    for(var i=0; i<this.onhand.length; i++) {
+      Object.setPrototypeOf(this.onhand[i], item.prototype);
+    }
+    this.drawgameblock('img/flinttoolset.png', 1);
+    $("#"+ this.id +"progress").css({"width":(this.counter*6)});
   }
   
   getblockcolor(itemtype) {

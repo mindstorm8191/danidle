@@ -1,7 +1,7 @@
 class woodshovel extends activeblock {
   constructor(gridx, gridy) {
     super(gridx, gridy);
-    this.name = 'Wood Shovel';
+    this.name = 'woodshovel';
     this.onhand = [];
     this.sticks = [];
     this.counter = 0;
@@ -72,9 +72,7 @@ class woodshovel extends activeblock {
     // Activeblock function to write the side panel when this block is selected
     $("#gamepanel").html('<center><b>Wood Shovel Maker</b></center><br />'+
                          'Accepts 5 sticks and turns it into 1 wood shovel.  Shovels unlock new resources such as gravel and dirt.<br /><br />'+
-                         'Priority: <img src="img/arrowleft.png" onclick="selectedblock.setpriority(-1)"> '+
-                         '<span id="sidepanelpriority">'+ this.priority +'</span> '+
-                         '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)"><br />'+
+                         this.displaypriority() +'<br />'+
                          'Currently has <span id="sidepanel_sticks">'+ this.sticks.length +'</span> sticks<br />'+
                          'Shovels on hand: <span id="sidepanel_shovels">'+ this.onhand.length +'</span><br />');
     if(this.counter==0) {
@@ -102,6 +100,22 @@ class woodshovel extends activeblock {
     }else{
       $("#sidepanel_status").html('Progress: '+ Math.floor((this.counter/12.0)*100) +'%');
     }
+  }
+  
+  reload() {
+    // activeblock function to manage regenerating the game while loading.  This is mostly used to re-instantiate items into object, as using localStorage and JSON doesn't
+    // hold onto the class instances when re-generating classes.  Therefore we need to use Object.setPrototypeOf(targetobject, classname.prototype) on each block instance
+    // (this is already done by here) and also any items this block contains.
+    // In this function, we also need to add any editable items back into the foods list array.
+    
+    for(var i=0; i<this.sticks.length; i++) {
+      Object.setPrototypeOf(this.sticks[i], item.prototype);
+    }
+    for(var i=0; i<this.onhand.length; i++) {
+      Object.setPrototypeOf(this.onhand[i], item.prototype);
+    }
+    this.drawgameblock('img/shovel_wood.png', 1);
+    $("#"+ this.id +"progress").css({"width":(this.counter*5)});
   }
 }
 

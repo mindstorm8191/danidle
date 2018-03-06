@@ -1,7 +1,7 @@
 class campfire extends activeblock {
   constructor(gridx, gridy) {
     super(gridx, gridy);
-    this.name = 'Campfire';
+    this.name = 'campfire';
     this.foodin = [];   // list of things that are ready to be cooked
     this.fuelin = [];   // list of things that are ready to be burned
     this.onhand = [];   // array of anything this block is holding, usually for output
@@ -89,7 +89,7 @@ class campfire extends activeblock {
       return null;
     }
   }
-
+  
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
     
@@ -200,9 +200,7 @@ class campfire extends activeblock {
     $("#gamepanel").html('<center><b>Camp Fire</b></center><br /><br />'+
                          'A place for meats to be cooked. Requires firewood (such as sticks) to function.  Fires must reach a temperature of 50 before it will'+
                          'start cooking meats, and increase cooking speed up to a temp of 200 (above 200 has no change in effect).<br /><br />'+
-                         'Priority: <img src="img/arrowleft.png" onclick="selectedblock.setpriority(-1)"> '+
-                         '<span id="sidepanelpriority">'+ this.priority +'</span> '+
-                         '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)"><br />'+
+                         this.displaypriority() +'<br />'+
                          'Fire temperature: <span id="sidepanelheat">'+ this.temp +'</span><br />');
     if(this.foodin.length>0) {
       var cooking = this.cooktime(this.foodin[0].name);
@@ -231,6 +229,29 @@ class campfire extends activeblock {
     $("#sidepanelfood").html(this.foodin.length);
     $("#sidepanelcooked").html(this.onhand.length);
   }
+  
+  reload() {
+    // activeblock function to manage regenerating the game while loading.  This is mostly used to re-instantiate items into object, as using localStorage and JSON doesn't
+    // hold onto the class instances when re-generating classes.  Therefore we need to use Object.setPrototypeOf(targetobject, classname.prototype) on each block instance
+    // (this is already done by here) and also any items this block contains.
+    // In this function, we also need to add any editable items back into the foods list array.
+    
+    for(var i=0;i<this.foodin.length;i++) {
+      Object.setPrototypeOf(this.foodin[i], item.prototype);
+    }
+    for(var i=0;i<this.fuelin.length;i++) {
+      Object.setPrototypeOf(this.fuelin[i], item.prototype);
+    }
+    for(var i=0;i<this.onhand.length;i++) {
+      Object.setPrototypeOf(this.onhand[i], item.prototype);
+      switch(this.onhand[i].name) {  // Everything this block outputs is edible... for now. That could change later, though, so we'll keep this check in place
+        case 'deermeat': case 'wolfmeat': case 'chickenmeat':
+          foodlist.push(this.onhand[i]);
+        break;
+    } }
+    this.drawgameblock('img/campfire.png', 1);
+      // We need to set the width of the progress bar, but we're not actually using it yet
+  } 
   
   cooktime(itemname) {
     // Returns the total cooking time for a given item.  Pass the name of the unfinished product, not the completed one

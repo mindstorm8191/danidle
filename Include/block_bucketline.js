@@ -1,7 +1,7 @@
 class bucketline extends activeblock {
   constructor(gridx, gridy) {
     super(gridx, gridy);
-    this.name = 'bucketline mover';
+    this.name = 'bucketline';
     this.onhand = null;  // since this can only ever hold 1 item at a time, this isn't stored as an array
     this.refuselist = [];  // list of all items that this bucketline worker won't pick up.  Determined by all available outputs of all neighbors (including those linked to neighboring bucketline workers)
     this.pickupside = 0;   // which side of the bucketline worker we picked up an item from.  When searching for a place to put the item down, we will skip-over trying this side
@@ -63,7 +63,7 @@ class bucketline extends activeblock {
     // bucketline movers don't allow other devices to give them items, they do the work of item movement 
     return null;
   }
-
+  
   update() {
     if(workpoints>=1) {
       var triggered = 0;  // this is used to show when the mover puts down an item somewhere and has nothing else to pick up
@@ -127,9 +127,7 @@ class bucketline extends activeblock {
     $("#gamepanel").html('<center><b>Bucket-line Item Mover</b><center><br />'+
                          'Place between item source and target to move items.  Can be set to manage where items flow to & from. This will be your most '+
                          'flexible item flow tool, but will always require a worker.<br /><br />'+
-                         'Priority: <img src="img/arrowleft.png" onclick="selectedblock.setpriority(-1)"> '+
-                         '<span id="sidepanelpriority">'+ this.priority +'</span> '+
-                         '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)"><br />');
+                         this.displaypriority() +'<br />');
     if(this.onhand==null) {
       $("#gamepanel").append('Currently holding: <span id="itempanel">none</span>');
     }else{
@@ -169,6 +167,23 @@ class bucketline extends activeblock {
     }else{
       $("#itempanel").html(this.onhand.name);
     }
+  }
+  
+  reload() {
+    // activeblock function to manage regenerating the game while loading.  This is mostly used to re-instantiate items into object, as using localStorage and JSON doesn't
+    // hold onto the class instances when re-generating classes.  Therefore we need to use Object.setPrototypeOf(targetobject, classname.prototype) on each block instance
+    // (this is already done by here) and also any items this block contains.
+    // In this function, we also need to add any editable items back into the foods list array.
+    
+    if(this.onhand!=null) {  // of OnHand is already null... nothing to worry about
+      Object.setPrototypeOf(this.onhand, item.prototype);
+      switch(this.onhand.name) {
+        case 'apple': case 'berry': case 'treenut': case 'mushroom': case 'deermeat': case 'wolfmeat': case 'chickenmeat':  // remember, this is only for edible foods, not uncooked stuff
+          foodlist.push(this.onhand);
+        break;
+      }
+    }
+    this.drawgameblock('img/bucketline_empty.png', 0);
   }
   
   blacklist(itemname) {

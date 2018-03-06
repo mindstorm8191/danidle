@@ -1,9 +1,9 @@
 class claydryer extends activeblock {
   constructor(gridx, gridy) {
     super(gridx, gridy);
-    this.name = 'Clay Dryer';
+    this.name = 'claydryer';
     this.stored = [];  // list of all stored items 
-    this.onhand = []; // array of anything this block is holding, usually for output
+    //this.onhand = []; // we're not even using this in this function
     this.drawgameblock('img/claydryer.png', 0); // use 1 to include a scroll bar, or 0 to exclude that
   }
   
@@ -77,7 +77,7 @@ class claydryer extends activeblock {
         return outitem;
     } }
   }
-
+  
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
     
@@ -116,6 +116,18 @@ class claydryer extends activeblock {
       } }
       $("#sidepanelnextup").html('Next up: '+ found.name +', ready in '+ found.drytime +' ticks');
     }
+  }
+  
+  reload() {
+    // activeblock function to manage regenerating the game while loading.  This is mostly used to re-instantiate items into object, as using localStorage and JSON doesn't
+    // hold onto the class instances when re-generating classes.  Therefore we need to use Object.setPrototypeOf(targetobject, classname.prototype) on each block instance
+    // (this is already done by here) and also any items this block contains.
+    // In this function, we also need to add any editable items back into the foods list array.
+    
+    for(var i=0;i<this.stored.length;i++) {
+      Object.setPrototypeOf(this.stored[i], item.prototype);
+    }
+    this.drawgameblock('img/claydryer.png', 0);
   }
 }
 

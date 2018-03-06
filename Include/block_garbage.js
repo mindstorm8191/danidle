@@ -1,11 +1,7 @@
-
-// Block template
-// This isn't ment to be included directly in the code. Use it as a basis to build new blocks
-
 class garbage extends activeblock {
   constructor(gridx, gridy) {
     super(gridx, gridy);
-    this.name = 'Garbage';
+    this.name = 'garbage';
     this.onhand = null;  // item this garbage is currently holding.  The garbage block can only destroy 1 item at a time
     this.drawgameblock('img/garbage.png', 0); // use 1 to include a scroll bar, or 0 to exclude that
   }
@@ -52,7 +48,7 @@ class garbage extends activeblock {
     // is on the blacklist, so it'll ask for an item from this block anyway.   
     return null;
   }
-
+  
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
     if(this.onhand!=null) {
@@ -67,15 +63,23 @@ class garbage extends activeblock {
     $("#gamepanel").html('<center><b>Garbage Bin</b></center><br /><br />'+
                          'Accepts any item and destroys it; Useful for clearing space for more important things.  Requires 1 worker to dispose of the object. What '+
                          'they do with the object, nobody knows!<br /><br/>'+
-                         'Priority: <img src="img/arrowleft.png" onclick="selectedblock.setpriority(-1)"> '+
-                         '<span id="sidepanelpriority">'+ this.priority +'</span> '+
-                         '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)"><br />'+
+                         this.displaypriority() +'<br />'+
                          '<a href="#" onclick="selectedblock.deleteblock()">Delete Block</a>');
   }
   
   updatepanel() {
     // activeblock function to update the panel once per tick
     
+  }
+  
+  reload() {
+    // activeblock function to manage regenerating the game while loading.  This is mostly used to re-instantiate items into object, as using localStorage and JSON doesn't
+    // hold onto the class instances when re-generating classes.  Therefore we need to use Object.setPrototypeOf(targetobject, classname.prototype) on each block instance
+    // (this is already done by here) and also any items this block contains.
+    // In this function, we also need to add any editable items back into the foods list array.
+    
+    if(this.onhand!=null) Object.setPrototypeOf(this.onhand, item.prototype);
+    this.drawgameblock('img/garbage.png', 0);
   }
 }
 

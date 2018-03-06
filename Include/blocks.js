@@ -36,7 +36,7 @@ class activeblock {
     console.log('New block ('+ this.name +') still needs an outputitem() function');
     return null;
   }
-
+  
   update() {
     // Backup for the update function.  Each activeblock type should have its own update function and fully override this one.
     console.log('New block ('+ this.name +') still needs an update() function');
@@ -50,6 +50,11 @@ class activeblock {
   updatepanel() {
     // Another backup function
     console.log('New block ('+ this.name +') still needs an updatepanel() function');
+  }
+  
+  reload() {
+    // Another backup function
+    console.log('New block ('+ this.name +') still needs a reload() function');
   }
   
   selectblock() {
@@ -169,6 +174,22 @@ class activeblock {
       $("#sidepaneltool"+ toolslist[i]).css('background-color', this.choosetoolcolor(targettool, toolslist[i]));
       $("#sidepaneltool"+ toolslist[i]).attr('title', this.choosetoolpopup(targettool, toolslist[i]));
     }
+  }
+  
+  displaypriority() {
+    // Handles displaying the priority levels of blocks.  The actual displayed priority will change based on the total number of priority levels. If there are more than 10,
+    // a double-arrow will show. If there are more than 100, a triple-arrow will be displayed
+    
+    var output = 'Priority: ';
+    var top = blocklist.lastpriority();
+    if(this.priority>111) output += '<img src="img/arrowleft3.png" onclick="selectedblock.setpriority(-100)"> ';
+    if(this.priority> 11) output += '<img src="img/arrowleft2.png" onclick="selectedblock.setpriority(-10)"> ';
+    output += '<img src="img/arrowleft.png" onclick="selectedblock.setpriority(-1)"> '+
+              '<span id="sidepanelpriority">'+ this.priority +'</span> '+
+              '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)">';
+    if(top>11 & this.priority<top-10) output += '<img src="img/arrowright2.png" onclick="selectedblock.setpriority(10)"> ';
+    if(top>111 & this.priority<top-100) output += '<img src="img/arrowright3.png" onclick="selectedblock.setpriority(100)"> ';
+    return output;
   }
 }
 

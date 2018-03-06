@@ -1,7 +1,7 @@
 class logmaker extends activeblock {
   constructor(gridx, gridy) {
     super(gridx, gridy);
-    this.name = 'Log Maker';
+    this.name = 'logmaker';
     this.onhand = []; // array of anything this block is holding, usually for output
     this.counter = 0;
     this.axe = null;  // This will need an axe to function
@@ -51,7 +51,7 @@ class logmaker extends activeblock {
       return null;
     }
   }
-
+  
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
     if(this.axe!=null) {
@@ -83,9 +83,7 @@ class logmaker extends activeblock {
     // activeblock functino that generates the content
     $("#gamepanel").html('<center><b>Log Maker</b></center><br /><br />'+
                          'Uses an axe to cut logs from nearby trees. Requires tools (at least a flint axe) to function<br /><br />'+
-                         'Priority: <img src="img/arrowleft.png" onclick="selectedblock.setpriority(-1)"> '+
-                         '<span id="sidepanelpriority">'+ this.priority +'</span> '+
-                         '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)"><br />'+
+                         this.displaypriority() +'<br />'+
                          'Progress: <span id="panelprogress">'+ Math.floor((this.counter/12.0)*100) +'</span>%<br />'+
                          'Logs stored: <span id="panelstock">'+ this.onhand.length +'</span><br />'+
                          '<a href="#" onclick="selectedblock.deleteblock()">Delete Block</a><br /><br />'+
@@ -111,6 +109,20 @@ class logmaker extends activeblock {
     
     // Also update the color of the existing tool panels
     this.updatetoollist(this.targetaxe, ['flintaxe']);
+  }
+  
+  reload() {
+    // activeblock function to manage regenerating the game while loading.  This is mostly used to re-instantiate items into object, as using localStorage and JSON doesn't
+    // hold onto the class instances when re-generating classes.  Therefore we need to use Object.setPrototypeOf(targetobject, classname.prototype) on each block instance
+    // (this is already done by here) and also any items this block contains.
+    // In this function, we also need to add any editable items back into the foods list array.
+    
+    if(this.axe!=null) Object.setPrototypeOf(this.axe, item.prototype);
+    for(var i=0; i<this.onhand.length; i++) {
+      Object.setPrototypeOf(this.onhand[i], item.prototype);
+    }
+    this.drawgameblock('img/log.png', 1);
+    $("#"+ this.id +"progress").css({"width":(this.counter*5)});
   }
   
   picktool(newaxename) {

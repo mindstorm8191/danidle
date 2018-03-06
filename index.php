@@ -1,4 +1,4 @@
-<!-- <?php
+<!-- 
   // DanIdle version 2
   // Build complex items from simple parts, 
   // starting from sticks and stones and working
@@ -11,14 +11,14 @@
   // Add buttons to the foraging post to decide if non-food things will be collected (such as seeds or flowers)
   
   // total project # of lines
-  // index                   block_clayformmaker     block_furnace          block_mudmaker     block_storage
+  // index                   block_clayformmaker     block_furnace          block_mudmaker         block_storage
   //     blocks                  block_dirtmaker         block_garbage          block_postmaker        block_twinemaker
   //         block_bucketline        block_firewood         block_gravelmaker       block_stickmaker       block_watercup
-  //             block_butchershop       block_flintfilter      block_huntingpost      block_stonecrusher     block_woodcupmaker
-  //                 block_campfire          block_flinttoolmaker   block_logmaker         block_stonefilter      block_woodpointspear
-  //                     block_claydryer         block_foragepost       block_minerspost       block_stonemaker      block_woodshovel
-  // 315+173+180+184+217+120+205+129+150+147+251+105+195+80+130+119+135+156+120+149+68+140+181+126+126+125+91+142+98+106 = 4463 lines!
-  
+  //             block_butchershop       block_flintfilter      block_huntingpost      block_stonecrusher      block_woodcupmaker
+  //                 block_campfire          block_flinttoolmaker   block_logmaker         block_stonefilter       block_woodpointspear
+  //                     block_claydryer         block_foragepost       block_minerspost       block_stonemaker       block_woodshovel
+  // 430+178+207+205+282+132+221+143+167+164+341+125+214+86+147+160+149+183+142+166+81+163+198+140+142+139+106+159+114+122 = 5206 lines!
+    
   // Population control - Determines how many human units on hand you have to manage
   // Factors affecting population
   //  Food on hand - If the player has enough food to feed everyone, the player will have positive population influence.  A variety of food sources will improve this as well (the more
@@ -29,13 +29,12 @@
   //           area will need only a certain amount of protection. Increasing it beyond that will not help matters
   //  Temp & rain - The player will eventually need to have covered areas for production of resources. Firstly to protect the human units from the elements, but later to protect
   //                the equipment too (especially electrical stuff).  Later, cooling methods will need to be considered
-  
-?>
 -->
 <html>
   <head>
     <title>DanIdle (tentative name)</title>
     <script src="include/jquery.js"               type="text/javascript"></script>
+    <script src="include/json2.js"                type="text/javascript"></script>
     <script src="include/tippy.all.min.js"        type="text/javascript"></script>
     <script src="include/blocks.js"               type="text/javascript"></script>
     <script src="include/block_foragepost.js"     type="text/javascript"></script>
@@ -72,9 +71,8 @@
       <tr>
         <td style="width:208px;" valign="top">
           Idle: <span id="showpopulation">3/4</span> Food: <span id="showfood">0</span><br />
-          Lvngqtr: <span id="showlivingspace">0</span> Clthng: <span id="showclothing">0</span><br /> 
-          Factory Components:<br />
-          Currently Selected: <span id="selectedblock">Delete Tool"</span>
+          Lvngqtr: <span id="showlivingspace">0</span> Clthng: <span id="showclothing">0</span><br />
+          <a href="#" onclick="savegame()">Save</a> / <a href="#" onclick="loadgame()">Load</a><br /> 
           <div id="blockselector" style="position:relative">
             <div id="cursorselector"       class="blockchoice" onclick="setcursor('selector')"       title="Selection; highlight items and center screen" style="background-color:red;"><img src="img/cursor.png" /></div>
             <div id="cursorstorage"        class="blockchoice" onclick="setcursor('storage')"        title="Storage; Store items (like tools)"><img src="img/storage.png" /></div>
@@ -112,51 +110,128 @@
       // how to sort a JS array (based on internal values): https://stackoverflow.com/questions/2466356/javascript-object-list-sorting-by-object-property
       
       var blocklist = [];
-      blocklist.compare = function(a, b) {
-        return a.priority - b.priority;
-      }
-      blocklist.findbyid = function(id) {
-        // returns a block based on its id, or null if that was not found
-        for(var i=0; i<blocklist.length; i++) {
-          if(blocklist[i].id==id) {
-            return blocklist[i];
-          }
+      expandblocklist();
+      function expandblocklist() {
+        // Expands the functionality of the blocklist (by adding additional functions).  We do this here instead of simply including them because we will need to regenerate
+        // these functions when reloading a game.
+        
+        blocklist.compare = function(a, b) {
+          return a.priority - b.priority;
         }
-        return null;
-      }
-      blocklist.findongrid = function(x,y) {
-        // returns a block based on its grid coordinates, or null if no block is there
-        for(var i=0; i<blocklist.length; i++) {
-          if(blocklist[i].xpos==x && blocklist[i].ypos==y) {
-            return blocklist[i];
+        blocklist.findbyid = function(id) {
+          // returns a block based on its id, or null if that was not found
+          for(var i=0; i<blocklist.length; i++) {
+            if(blocklist[i].id==id) {
+              return blocklist[i];
+            }
           }
+          return null;
         }
-        return null;
-      }
-      blocklist.findinstorage = function(itemname, pickup) {
-        // returns an item from a chest block matching the name, or null if no item of that exists in any chest
-        // pickup - set to 1 if the item is to be collected, or 0 if this simply returns that it is available
-        for(var i=0; i<blocklist.length; i++) {
-          if(blocklist[i].name=='Storage') {
-            if(blocklist[i].possibleoutputs()==itemname) {
-              //console.log('blocklist.findinstorage: found '+ itemname);
-              if(pickup==1) {
-                return blocklist[i].outputitem(1);  // this outputitem function will perform all the tasks we need to retrieve the target item. no need for a special function here
-              }else{
-                return 1;
-        } } } }
-        return null;
-      }
-      blocklist.lastpriority = function() {
-        // returns the value of the highest-value priority block (aka the block with the least priority level)
-        // so long as the list is sorted by priority, this is actually very simple:
-        if(blocklist.length>0) {
-          return blocklist[blocklist.length-1].priority;
-        }else{
-          return 0;
+        blocklist.findongrid = function(x,y) {
+          // returns a block based on its grid coordinates, or null if no block is there
+          for(var i=0; i<blocklist.length; i++) {
+            if(blocklist[i].xpos==x && blocklist[i].ypos==y) {
+              return blocklist[i];
+            }
+          }
+          return null;
+        }
+        blocklist.findinstorage = function(itemname, pickup) {
+          // returns an item from a chest block matching the name, or null if no item of that exists in any chest
+          // pickup - set to 1 if the item is to be collected, or 0 if this simply returns that it is available
+          //console.log('Searching for '+ itemname +' in any storage');
+          for(var i=0; i<blocklist.length; i++) {
+            if(blocklist[i].name=='storage') {
+              if(blocklist[i].possibleoutputs()==itemname) {
+                //console.log('blocklist.findinstorage: found '+ itemname);
+                if(pickup==1) {
+                  return blocklist[i].outputitem(1);  // this outputitem function will perform all the tasks we need to retrieve the target item. no need for a special function here
+                }else{
+                  return 1;
+          } } } }
+          return null;
+        }
+        blocklist.lastpriority = function() {
+          // returns the value of the highest-value priority block (aka the block with the least priority level)
+          // so long as the list is sorted by priority, this is actually very simple:
+          if(blocklist.length>0) {
+            return blocklist[blocklist.length-1].priority;
+          }else{
+            return 0;
+          }
         }
       }
       
+      function savegame() {
+        // Handles saving the game to LocalStorage.
+        // Unfortunately, LocalStorage is unable to manage saving class instances, so trying to save the entire blocklist results in all the data but no functions.  We will
+        // need to generate our save data some other way.
+        localStorage.setItem('blocks', JSON.stringify(blocklist));
+        localStorage.setItem('panels', JSON.stringify(panellist));
+        //localStorage.setItem('foods',  JSON.stringify(foodlist));  We would include this list as well, but... when creating the blocklist when loading, trying to create these
+        //  elements too will end up duplicating the food (while causing the food in the blocks to never be consumed).  We will have to re-generate our foods list upon reloading
+        localStorage.setItem('foodtimer', foodconsumertimer);
+        localStorage.setItem('population', population);
+      }
+      
+      function loadgame() {
+        // Handles loading the game from LocalStorage
+        $("#game").html('');  // blank out the game map (so it can be regenerated)
+        $("#gamepanel").html('');  // Also blank out the side panel
+        $("#blockselector").html('');
+        selectedblock = null;
+        lastblockid = 0;  // We need to re-set the last block ID
+        blocklist = [];
+        panellist = [];
+        foodlist = [];
+        panellist = JSON.parse(localStorage.getItem('panels'));
+        starterunlocks();
+        for(var i=0; i<panellist.length; i++) {
+          Object.setPrototypeOf(panellist[i], panel.prototype);
+          if(panellist[i].state==1) {  // Re-enable all the things that have already been unlocked
+            $("#blockselector").append('<div id="cursor'+ panellist[i].name +'" class="blockchoice" onclick="setcursor(\''+ panellist[i].name +'\')" title="'+ panellist[i].tooltip +'"><img src="'+ panellist[i].image +'" /></div>');
+          }
+        }
+        blocklist = JSON.parse(localStorage.getItem('blocks'));
+        expandblocklist();
+        for(var i=0; i<blocklist.length; i++) {
+          switch(blocklist[i].name) {
+            case 'bucketline':     Object.setPrototypeOf(blocklist[i],     bucketline.prototype); break;
+            case 'butchershop':    Object.setPrototypeOf(blocklist[i],    butchershop.prototype); break;
+            case 'campfire':       Object.setPrototypeOf(blocklist[i],       campfire.prototype); break;
+            case 'claydryer':      Object.setPrototypeOf(blocklist[i],      claydryer.prototype); break;
+            case 'clayformmaker':  Object.setPrototypeOf(blocklist[i],  clayformmaker.prototype); break;
+            case 'dirtmaker':      Object.setPrototypeOf(blocklist[i],      dirtmaker.prototype); break;
+            case 'firewood':       Object.setPrototypeOf(blocklist[i],       firewood.prototype); break;
+            case 'flintfilter':    Object.setPrototypeOf(blocklist[i],    flintfilter.prototype); break;
+            case 'flinttoolmaker': Object.setPrototypeOf(blocklist[i], flinttoolmaker.prototype); break;
+            case 'foragepost':     Object.setPrototypeOf(blocklist[i],     foragepost.prototype); break;
+            case 'furnace':        Object.setPrototypeOf(blocklist[i],        furnace.prototype); break;
+            case 'garbage':        Object.setPrototypeOf(blocklist[i],        garbage.prototype); break;
+            case 'gravelmaker':    Object.setPrototypeOf(blocklist[i],    gravelmaker.prototype); break;
+            case 'huntingpost':    Object.setPrototypeOf(blocklist[i],    huntingpost.prototype); break;
+            case 'logmaker':       Object.setPrototypeOf(blocklist[i],       logmaker.prototype); break;
+            case 'minerspost':     Object.setPrototypeOf(blocklist[i],     minerspost.prototype); break;
+            case 'mudmaker':       Object.setPrototypeOf(blocklist[i],       mudmaker.prototype); break;
+            case 'postmaker':      Object.setPrototypeOf(blocklist[i],      postmaker.prototype); break;
+            case 'stickmaker':     Object.setPrototypeOf(blocklist[i],     stickmaker.prototype); break;
+            case 'stonecrusher':   Object.setPrototypeOf(blocklist[i],   stonecrusher.prototype); break;
+            case 'stonefilter':    Object.setPrototypeOf(blocklist[i],    stonefilter.prototype); break;
+            case 'stonemaker':     Object.setPrototypeOf(blocklist[i],     stonemaker.prototype); break;
+            case 'storage':        Object.setPrototypeOf(blocklist[i],        storage.prototype); break;
+            case 'twinemaker':     Object.setPrototypeOf(blocklist[i],     twinemaker.prototype); break;
+            case 'watercup':       Object.setPrototypeOf(blocklist[i],       watercup.prototype); break;
+            case 'woodencupmaker': Object.setPrototypeOf(blocklist[i], woodencupmaker.prototype); break;
+            case 'woodpointspear': Object.setPrototypeOf(blocklist[i], woodpointspear.prototype); break;
+            case 'woodshovel':     Object.setPrototypeOf(blocklist[i],     woodshovel.prototype); break;
+          }
+          blocklist[i].reload();  // We'll have to handle the actual html reloading in here, since each block uses a different image and it isn't stored in the class
+          if(blocklist[i].id>lastblockid) lastblockid = blocklist[i].id;
+        }
+        lastblockid++;  // Increment the last block id so we don't have ID conflicts
+        foodconsumertimer = parseInt(localStorage.getItem('foodtimer'));
+        population = parseInt(localStorage.getItem('population'));
+      }
       
       $(document).mousemove(function(e) {
         mousex = e.pageX;
@@ -222,6 +297,8 @@
       }
       
       $(document).ready(function() {
+        starterunlocks();
+        
         mytimer = setInterval(function() {
           // The first thing to do is to update the food counter.  When it hits zero, we will need to find some food to consume (hopefully picked at random, but for now
           // we'll just pick whatever we can find)
@@ -244,7 +321,7 @@
             foodconsumertimer += 120 / population;
             //console.log('Foodconsumertimer='+ foodconsumertimer);
           }
-          console.log('Foodconsumertimer='+ foodconsumertimer);
+          //console.log('Foodconsumertimer='+ foodconsumertimer);
           // Also update the lifetime of all foods we have stored
           for(var i=0; i<foodlist.length; i++) {
             foodlist[i].lifetime--;
@@ -286,18 +363,29 @@
         var x = new panel('watercup',      'img/watercup.png',      'woodencup', 'Water Cup; Fills wooden cups with water');
         var x = new panel('mudmaker',      'img/mudmaker.png',      'woodencup', 'Mud Maker; Produces mud. Requires dirt & water');
         var x = new panel('clayformmaker', 'img/clayformmaker.png', 'woodencup', 'Clay From-maker; shapes mud into shapes');
-        var x = new panel('claydryer',     'img/claydryer.png',     'woodencup', 'Clay Dryer; Dries clay before being fired');
-        var x = new panel('stonemaker',    'img/stone.png',         'flintpickaxe', 'Stone Collector; Requires a pickaxe');
-        var x = new panel('minerspost',    'img/minerspost.png',    'flintpickaxe', 'Miners Post; dig deep to find raw metals. Needs a pickaxe, posts, torches & twine');
-        var x = new panel('stonecrusher',  'img/stonecrusher.png',  'flintpickaxe', 'Stone Crusher; Crushes stone so ores can be extracted. Requires a hammer');
+        var x = new panel('claydryer',     'img/claydryer.png',     'woodencup',      'Clay Dryer; Dries clay before being fired');
+        var x = new panel('stonemaker',    'img/stone.png',         'flintpickaxe',   'Stone Collector; Requires a pickaxe');
+        var x = new panel('minerspost',    'img/minerspost.png',    'flintpickaxe',   'Miners Post; dig deep to find raw metals. Needs a pickaxe, posts, torches & twine');
+        var x = new panel('stonecrusher',  'img/stonecrusher.png',  'flintpickaxe',   'Stone Crusher; Crushes stone so ores can be extracted. Requires a hammer');
         var x = new panel('huntingpost',   'img/huntingpost.png',   'woodpointspear', 'Hunting Post; collect meats from environment. Requires a weapon');
         var x = new panel('campfire',      'img/campfire.png',      'woodpointspear', 'Campfire; cook foods collected from hunting. Uses sticks as fuel');
-        var x = new panel('twinemaker',    'img/twinemaker.png',    'flintknife', 'Twine Maker; produces twine from wood bark. Requires a knife');
-        var x = new panel('butchershop',   'img/butcher.png',       'flintknife', 'Butcher shop; cuts meats before cooking. Requires a knife'); 
+        var x = new panel('twinemaker',    'img/twinemaker.png',    'flintknife',     'Twine Maker; produces twine from wood bark. Requires a knife');
+        var x = new panel('butchershop',   'img/butcher.png',       'flintknife',     'Butcher shop; cuts meats before cooking. Requires a knife'); 
 
-//        This code is here for testing purposes only - it allows me to jump ahead so I'm not spending 5 minutes every time I want to test something new
+//        This below code is here for testing purposes only - it allows me to jump ahead so I'm not spending 5 minutes every time I want to test something new
         
       });
+      
+      function starterunlocks() {
+        // Adds in all the block types that the player starts with.  We're putting this here because when we load a game, we want to zero-out the list so we can regenerate the whole thing
+        $("#blockselector").html('<div id="cursorselector"       class="blockchoice" onclick="setcursor(\'selector\')"       title="Selection; highlight items and center screen" style="background-color:red;"><img src="img/cursor.png" /></div>'+
+                                 '<div id="cursorstorage"        class="blockchoice" onclick="setcursor(\'storage\')"        title="Storage; Store items (like tools)"><img src="img/storage.png" /></div>'+
+                                 '<div id="cursorbucketline"     class="blockchoice" onclick="setcursor(\'bucketline\')"     title="Bucket-line mover; Move items between blocks"><img src="img/bucketline_right.png" /></div>'+
+                                 '<div id="cursorstickmaker"     class="blockchoice" onclick="setcursor(\'stickmaker\')"     title="Stick-Maker; Produces sticks"><img src="img/stickmaker.png" /></div>'+
+                                 '<div id="cursorwoodshovel"     class="blockchoice" onclick="setcursor(\'woodshovel\')"     title="Wood Shovel Maker; Turns sticks into a shovel"><img src="img/shovel_wood.png" /></div>'+
+                                 '<div id="cursorforagepost"     class="blockchoice" onclick="setcursor(\'foragepost\')"     title="Forage Post; Collect food from surrounding lands"><img src="img/foragepost.png" /></div>'+
+                                 '<div id="cursorwoodpointspear" class="blockchoice" onclick="setcursor(\'woodpointspear\')" title="Wood-point spear maker; Make spears for hunting"><img src="img/woodpointspear.png" /></div>');
+      }
       
       function findunlocks(newitem) {
         // Searches for panels that can be unlocked (and displayed) based on a new item having been finished)
@@ -311,7 +399,7 @@
       }
       
       
-      // Need another class to manage the buildable options on the right. Use it to determine when items are shown and what gets constructed based on that item.
+      // Need another class to manage the buildable options on the left. Use it to determine when items are shown and what gets constructed based on that item.
       // Use it to add structures to the game during initiation, and manage them through the game.
       
       class panel {

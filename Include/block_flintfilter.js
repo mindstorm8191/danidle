@@ -1,7 +1,7 @@
 class flintfilter extends activeblock {
   constructor(gridx, gridy) {
     super(gridx, gridy);
-    this.name = 'Flint filter';
+    this.name = 'flintfilter';
     this.onhand = []; // array of anything this block is holding, usually for output
     this.rawgravel = [];
     this.counter = 0;
@@ -58,7 +58,7 @@ class flintfilter extends activeblock {
       return null;
     }
   }
-
+  
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
     
@@ -94,9 +94,7 @@ class flintfilter extends activeblock {
     // activeblock functino that generates the content
     $("#gamepanel").html('<center><b>Flint Filter</b></center><br /><br />'+
                          'Filters flint out of raw gravel.  With 5 raw gravel, returns 1 flint and 4 pure gravel.<br /><br />'+
-                         'Priority: <img src="img/arrowleft.png" onclick="selectedblock.setpriority(-1)"> '+
-                         '<span id="sidepanelpriority">'+ this.priority +'</span> '+
-                         '<img src="img/arrowright.png" onclick="selectedblock.setpriority(1)"><br />'+
+                         this.displaypriority() +'<br />'+
                          'Progress: <span id="panelprogress">'+ Math.floor((this.counter/15.0)*100) +'</span>%<br />'+
                          'Raw gravel stored: <span id="panelgravel">'+ this.rawgravel.length +'</span><br />'+
                          'Output items: <span id="panelstock">'+ this.onhand.length +'</span><br />'+
@@ -123,6 +121,23 @@ class flintfilter extends activeblock {
       $("#sidepanelactivetool").html(this.shovel.name +' ('+ (Math.floor((this.shovel.endurance / this.shovel.totalendurance)*100)) +'% health)');
     }
     this.updatetoollist(this.targetshovel, ['woodshovel', 'flintshovel']);
+  }
+  
+  reload() {
+    // activeblock function to manage regenerating the game while loading.  This is mostly used to re-instantiate item objects into classes, as using localStorage and JSON doesn't
+    // hold onto the class instances when re-generating classes.  Therefore we need to use Object.setPrototypeOf(targetobject, classname.prototype) on each block instance
+    // (this is already done by here) and also any items this block contains.
+    // In this function, we also need to add any editable items back into the foods list array.
+    
+    if(this.shovel!=null) Object.setPrototypeOf(this.shovel, item.prototype);
+    for(var i=0; i<this.rawgravel.length; i++) {
+      Object.setPrototypeOf(this.rawgravel[i], item.prototype);
+    }
+    for(var i=0; i<this.onhand.length; i++) {
+      Object.setPrototypeOf(this.onhand[i], item.prototype);
+    }
+    this.drawgameblock('img/filter_flint.png', 1);
+    $("#"+ this.id +"progress").css({"width":(this.counter*4)});
   }
   
   picktool(newshovelname) {
