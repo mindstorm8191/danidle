@@ -59,7 +59,7 @@ class huntingpost extends activeblock {
     for(var i=0; i<this.onhand.length; i++) {
       this.onhand[i].lifetime--;
       if(this.onhand[i].lifetime<=0) {
-        this.onhand.splice(i,0);
+        this.onhand.splice(i,1);
         i--;
     } }
     
