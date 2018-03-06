@@ -45,11 +45,16 @@ class gravelmaker extends activeblock {
     }
   }
   
-  pushfoods() { }
-    // This block doesn't deal with any food items
-
+  getoutput(targetitem) {
+    if(targetitem=='rawgravel') {
+      return this.outputitem();
+    }
+    return null;
+  }
+  
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
+    
     if(this.shovel!=null) {  // this does not load a shovel right when the block starts.  The user will have to select the block and load one in
       //console.log('using '+ this.shovel.name +' for work!');
       if(this.onhand.length<5) {

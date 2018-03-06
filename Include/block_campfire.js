@@ -90,6 +90,11 @@ class campfire extends activeblock {
     }
   }
   
+  getoutput(targetitem) {
+    // For the moment this block doesn't output any cooked food items.  This might change later on though.
+    return null;
+  }
+  
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
     
@@ -124,74 +129,99 @@ class campfire extends activeblock {
     }else{
       this.temp = Math.max(this.temp-2, 0);
     }
-    if(this.foodin.length>0 && this.fuelin.length>0 && this.onhand.length<20) {  // There is work to be done here!
-      // First, see if there is food to be removed.  We will use the counter in a count-down setup.  Food may stay on a campfire for a little while longer than the target
-      // cook time, but leaving it on too long will result in unuseable food.
-      
-        // Continue with cooking the food
-      if(this.foodcooking==1) {
-        var result = (this.temp-50)/150.0;
-        if(result>1) result = 1;
-        if(result<0) result = 0;
-        this.counter -= result;
-      }
-      
-      if(workpoints>=1) {
-        //console.log('(campfire) working; temp='+ this.temp +', fuelburn='+ this.fuelburn +', counter='+ this.counter +';');
-          // Remove food from the campfire
-        if(this.foodcooking==1 && this.counter<0) {
-          workpoints--;
-          if(this.counter>-30) { // make sure this food isn't burnt
-            switch(this.foodin[0].name) {
-              case 'deaddeer':  // deer meat. provides the most amount of food. In this form it provides a little less meat than if it were butchered before cooking
-                var food = new item('deermeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);  // 600 = 10 minutes
-                var food = new item('deermeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);
-                var food = new item('deermeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);
-                var food = new item('deermeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);
-                var food = new item('deermeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);
-                var food = new item('deermeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);
-              break;
-              case 'deadchicken':  // chicken meat. Small animal, but still provides a good deal of food
-                var food = new item('chickenmeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);
-                var food = new item('chickenmeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);
-              break;
-              case 'deadwolf':  // wolf meat. A little larger than a chicken
-                var food = new item('wolfmeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);
-                var food = new item('wolfmeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);
-                var food = new item('wolfmeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);
-              break;
-              case 'rawdeermeat':
-                var food = new item('deermeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);
-              break;
-              case 'rawwolfmeat':
-                var food = new item('wolfmeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);
-              break;
-              case 'rawchickenmeat':
-                var food = new item('chickenmeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);
-              break;
-            }
-          }
-          this.foodin.splice(0,1); // removes the first item from the list
-          this.foodcooking = 0;
-          this.counter = 0;
-        }else{
-          // next, see if there is food to be added
-          if(this.foodcooking==0 && this.foodin.length>0) {
-            //console.log('(campfire) Lets start cooking');
+    if(this.foodin.length>0 && this.fuelin.length>0) {  // There is work to be done here!
+      if(this.onhand.length<20) {
+        // First, see if there is food to be removed.  We will use the counter in a count-down setup.  Food may stay on a campfire for a little while longer than the target
+        // cook time, but leaving it on too long will result in unuseable food.
+        
+          // Continue with cooking the food
+        if(this.foodcooking==1) {
+          var result = (this.temp-50)/150.0;
+          if(result>1) result = 1;
+          if(result<0) result = 0;
+          this.counter -= result;
+        }
+        
+        if(workpoints>=1) {
+          //console.log('(campfire) working; temp='+ this.temp +', fuelburn='+ this.fuelburn +', counter='+ this.counter +';');
+            // Remove food from the campfire
+          if(this.foodcooking==1 && this.counter<0) {
             workpoints--;
-            this.foodcooking = 1;
-            this.counter = this.cooktime(this.foodin[0].name);
-          }else{
-            // Last, add fuel to the fire to keep it hot
-            if(this.temp<200 && this.fuelburn<=0 && this.fuelin.length>0) {
-              //console.log('(campfire) Add some wood (temp='+ this.temp +')');
-              workpoints--;
-              switch(this.fuelin[0].name) {
-                case 'stick': this.fuelburn = 5; break;
-                case 'firewood': this.fuelburn = 12; break;
+            if(this.counter>-30) { // make sure this food isn't burnt
+              switch(this.foodin[0].name) {
+                case 'deaddeer':  // deer meat. provides the most amount of food. In this form it provides a little less meat than if it were butchered before cooking
+                  var food = new item('deermeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);  // 600 = 10 minutes
+                  var food = new item('deermeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);
+                  var food = new item('deermeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);
+                  var food = new item('deermeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);
+                  var food = new item('deermeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);
+                  var food = new item('deermeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);
+                break;
+                case 'deadchicken':  // chicken meat. Small animal, but still provides a good deal of food
+                  var food = new item('chickenmeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);
+                  var food = new item('chickenmeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);
+                break;
+                case 'deadwolf':  // wolf meat. A little larger than a chicken
+                  var food = new item('wolfmeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);
+                  var food = new item('wolfmeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);
+                  var food = new item('wolfmeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);
+                break;
+                case 'rawdeermeat':
+                  var food = new item('deermeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);
+                break;
+                case 'rawwolfmeat':
+                  var food = new item('wolfmeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);
+                break;
+                case 'rawchickenmeat':
+                  var food = new item('chickenmeat'); food.lifetime = 600; food.location = this.id; foodlist.push(food); this.onhand.push(food);
+                break;
               }
-              this.fuelin.splice(0,1);
-      } } } }
+            }
+            this.foodin.splice(0,1); // removes the first item from the list
+            this.foodcooking = 0;
+            this.counter = 0;
+          }else{
+            // next, see if there is food to be added
+            if(this.foodcooking==0 && this.foodin.length>0) {
+              //console.log('(campfire) Lets start cooking');
+              workpoints--;
+              this.foodcooking = 1;
+              this.counter = this.cooktime(this.foodin[0].name);
+            }else{
+              // Last, add fuel to the fire to keep it hot
+              if(this.temp<200 && this.fuelburn<=0 && this.fuelin.length>0) {
+                //console.log('(campfire) Add some wood (temp='+ this.temp +')');
+                workpoints--;
+                switch(this.fuelin[0].name) {
+                  case 'stick': this.fuelburn = 5; break;
+                  case 'firewood': this.fuelburn = 12; break;
+                }
+                this.fuelin.splice(0,1);
+      } } } } }
+    }else{
+      // We are lacking material to continue.  First figure out what we need
+      if(this.fuelin.length==0) {
+          // Start by finding some fuel
+        for(var i=0; i<4; i++) {
+          var neighbor = this.getneighbor(i);
+          if(neighbor!=null) {
+            var pickup = neighbor.getoutput('stick');
+            if(pickup!=null) {
+              this.fuelin.push(pickup);
+              i=5;
+        } } }
+      }else{
+        var itemslist = ['deaddeer', 'deadwolf', 'deadchicken', 'rawdeermeat', 'rawwolfmeat', 'rawchickenmeat'];
+        for(var i=0; i<4; i++) {
+          var neighbor = this.getneighbor(i);
+          if(neighbor!=null) {
+            for(var j=0; j<itemslist.length; j++) {
+              var pickup = neighbor.getoutput(itemslist[j]);
+              if(pickup!=null) {
+                this.foodin.push(pickup);
+                i=5; j=itemslist.length+1;
+        } } } }
+      }
     }
   }
   

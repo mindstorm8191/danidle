@@ -62,6 +62,23 @@ class clayformmaker extends activeblock {
     }
   }
   
+  getoutput(targetitem) {
+    // Returns a specific item, if it is stored here
+    
+    switch(targetitem) {
+      case 'rawdirtbrick':
+        // Since this block is capable of outputting many other things, we should search the onhand array to see if we have any of the target item.
+        for(var i=0; i<this.onhand.length; i++) {
+          if(this.onhand[i].name==targetitem) {
+            var grab = this.onhand[i];
+            this.onhand.splice(i,1);
+            return grab;
+        } }
+      break;
+    }
+    return null;
+  }
+  
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
     if(this==selectedblock) {
@@ -75,8 +92,8 @@ class clayformmaker extends activeblock {
         default: console.log('Error in clayformmaker->update: target type ('+ this.currentout +') doesnt have a set time');
       }
     }
-    if(this.currentout!='') {
-      if(this.input.length>0) {
+    if(this.input.length>0) {
+      if(this.currentout!='') {
         if(this.onhand.length<10) {
           if(workpoints>=1) {
             this.counter++;
@@ -94,7 +111,20 @@ class clayformmaker extends activeblock {
             }
             $("#"+ this.id +"progress").css({"width":(this.counter*(60/this.timetocomplete))});
       } } }
-    }
+    }else{
+      // Nothing is on hand currently. Let's serach nearby for something to pick up.  We'll eventually accept many items, so we'll have to account for that, even though we only
+      // have 1 right now
+      var picklist = ['mud'];
+      for(var i=0; i<4; i++) {
+        var neighbor = this.getneighbor(i);
+        if(neighbor!=null) {
+          for(var j=0; j<picklist.length; j++) {
+            var pickitem = neighbor.getoutput(picklist[j]);
+            if(pickitem!=null) {
+              this.input.push(pickitem);
+              j=picklist.length+1;
+              i=5;
+    } } } } }
   }
   
   drawpanel() {

@@ -74,6 +74,27 @@ class mudmaker extends activeblock {
     return null;
   }
   
+  getoutput(targetitem) {
+    // Outputs a target output item, if it exists in  this block
+    switch(targetitem) {
+      case 'mud':
+        if(this.onhand.length>0) {
+          var grab = this.onhand[0];
+          this.onhand.splice(0,1);
+          return grab;
+        }
+      break;
+      case 'woodencup':
+        if(this.emptycup.length>0) {
+          var grab = this.emptycup[0];
+          this.emptycup.splice(0,1);
+          return grab;
+        }
+      break;
+    }
+    return null;
+  }
+  
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
     if(this.watercup.length>0) {
@@ -91,7 +112,27 @@ class mudmaker extends activeblock {
                 this.emptycup.push(new item('woodencup'));
               }
               $("#"+ this.id +"progress").css({"width":(this.counter*12)});  // aka counter * (60/5)
-    } } } } }
+        } } }
+      }else{
+          // no dirt on hand. search for some now
+        for(var i=0; i<4; i++) {
+          var neighbor = this.getneighbor(i);
+          if(neighbor!=null) {
+            var pickup = neighbor.getoutput('dirt');
+            if(pickup!=null) {
+              this.dirt.push(pickup);
+              i=5;
+      } } } }
+    }else{
+        // no water on hand. search for some now
+      for(var i=0; i<4; i++) {
+        var neighbor = this.getneighbor(i);
+        if(neighbor!=null) {
+          var pickup = neighbor.getoutput('woodenwatercup');
+          if(pickup!=null) {
+            this.watercup.push(pickup);
+            i=5;
+    } } } }
   }
   
   drawpanel() {

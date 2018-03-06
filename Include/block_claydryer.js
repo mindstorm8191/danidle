@@ -78,6 +78,22 @@ class claydryer extends activeblock {
     } }
   }
   
+  getoutput(targetitem) {
+    switch(targetitem) {  // This block will likely have a lot of output options, but for now we only have 1
+      case 'dirtbrick':
+        // In the event we are trying more than one type of item, we need to search for a matching item.  We also need to ensure the item found has finished drying
+        for(var i=0; i<this.stored.length; i++) {
+          if(this.stored[i].name==targetitem) {
+            if(this.stored[i].drytime<=0) {
+              var grab = this.stored[i];
+              this.stored.splice(i,1);
+              return grab;
+        } } }
+      break;
+    }
+    return null;
+  }
+  
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
     
@@ -86,6 +102,18 @@ class claydryer extends activeblock {
       if(this.stored[i].drytime>0) {
         this.stored[i].drytime--;
     } }
+    // Go ahead and search for additional items to load into this block - if there's room
+    if(this.stored.length<20) {
+      for(var i=0; i<4; i++) {
+        var neighbor = this.getneighbor(i);
+        if(neighbor!=null) {
+          var pickup = neighbor.getoutput('rawdirtbrick');
+          if(pickup!=null) {
+            // go aheaad and convert this to a dirt brick, and add a timer
+            pickup.name = 'dirtbrick'; pickup.drytime = 200;
+            this.stored.push(pickup);
+            i=5;
+    } } } }
   }
   
   drawpanel() {

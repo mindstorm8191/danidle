@@ -3,6 +3,7 @@ class storage extends activeblock {
     super(gridx, gridy);
     this.name = 'storage';
     this.onhand = [];
+    this.targetitem = ''; // What item the user wants to fill this storage with
     this.outputstatus = 0;  // user can determine if a given item can be output or not.
     this.drawgameblock('img/storage.png', 1);  // we will use the scrollbar to represent the unit's remaining capacity
   }
@@ -76,9 +77,31 @@ class storage extends activeblock {
     }
   }
   
+  getoutput(target) {
+    if(this.outputstatus==1) {
+      if(this.onhand.length>0) {
+        if(this.onhand[0].name==target) {
+          var grab = this.onhand[0];
+          this.onhand.splice(0,1);
+          return grab;
+    } } }
+    return null;
+  }
+  
   update() {
-   // activeblock function to allow this block to manage internal operations
-   // other than managing input & output, there is nothing going on in this unit
+    // activeblock function to allow this block to manage internal operations
+    // this block will continuously look for new items to collect (that meet its criteria)
+    
+    if(this.onhand.length<10) {
+      if(this.targetitem!='') {
+        for(var i=0; i<4; i++) {
+          var neighbor = this.getneighbor(i);
+          if(neighbor!=null) {
+            var pickup = neighbor.getoutput(this.targetitem);
+            if(pickup!=null) {
+              this.onhand.push(pickup);
+              i=5;
+    } } } } }
   }
   
   drawpanel() {
@@ -91,13 +114,39 @@ class storage extends activeblock {
     }else{
       $("#gamepanel").append('Holding: <span id="storagecontent">'+ this.onhand[0].name +' x'+ this.onhand.length +'</span><br /><br />');
     }
+    
+    // Now list all the possible inputs this block can accept, and let the user pick one of them
+    $("#gamepanel").append('<b>Input selection:</b><br />');
+    var displaycolor = 'red';
+    if(this.targetitem=='') displaycolor = 'green';
+    $("#gamepanel").append('<span class="sidepanelbutton" id="sidepaneltarget" style="background-color:'+ displaycolor +'" onclick="selectedblock.settarget(\'\')">None</span>');
+    var fulllist = [];  // this is to prevent the same item from being listed twice
+    for(var i=0; i<4; i++) {
+      var neighbor = this.getneighbor(i);
+      if(neighbor!=null) {
+        var itemslist = neighbor.possibleoutputs([]);
+        for(var j=0; j<itemslist.length; j++) {
+          if(fulllist.indexOf(itemslist[j])==-1) {
+            // This is not yet on the list.
+            fulllist.push(itemslist[j]);
+            if(this.targetitem==itemslist[j]) {
+              displaycolor = 'green';
+            }else{
+              displaycolor = 'red';
+            }
+            $("#gamepanel").append('<span class="sidepanelbutton" id="sidepaneltarget'+ itemslist[j] +'" style="background-color:'+ displaycolor +'" onclick="selectedblock.settarget(\''+ itemslist[j] +'\')">'+ itemslist[j] +'</span>');
+          }
+        }
+      }
+    }
+    
     var status = 'Off';
     var color = 'red';
     if(this.outputstatus==1) {
       status = 'On';
       color = 'green'; 
     }
-    $("#gamepanel").append('Output status: <span class="sidepanelbutton" id="sidepaneloutput" style="background-color:'+ color +'" onclick="selectedblock.togglestatus()">'+ status +'</span><br />'); 
+    $("#gamepanel").append('<br /><br />Output status: <span class="sidepanelbutton" id="sidepaneloutput" style="background-color:'+ color +'" onclick="selectedblock.togglestatus()">'+ status +'</span><br />'); 
     $("#gamepanel").append('Equipment options not yet available<br />'+
                            '<a href="#" onclick="selectedblock.deleteblock()">Delete Block</a>');
   }
@@ -125,6 +174,12 @@ class storage extends activeblock {
     } }
     this.drawgameblock('img/storage.png', 1);
       // We're not yet using the progress bar; I think we'll use it for denoting the used capacity though
+  }
+  
+  settarget(newtarget) {
+    $("#sidepaneltarget"+ this.targetitem).css("background-color", "red");
+    this.targetitem = newtarget;
+    $("#sidepaneltarget"+ this.targetitem).css("background-color", "green");
   }
   
   togglestatus() {

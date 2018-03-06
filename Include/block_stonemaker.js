@@ -49,6 +49,14 @@ class stonemaker extends activeblock {
     }
   }
   
+  getoutput(targetitem) {
+    // Returns a target output item, or null if it isn't here
+    if(targetitem=='stone') {
+      return this.outputitem();
+    }
+    return null;
+  }
+  
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
     if(this.pickaxe!=null) {

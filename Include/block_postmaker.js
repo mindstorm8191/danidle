@@ -62,6 +62,12 @@ class postmaker extends activeblock {
     }
   }
   
+  getoutput(targetitem) {
+    // Returns a target output item, or null if it isn't available
+    if(targetitem=='woodpost') return this.outputitem();
+    return null;
+  }
+  
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
     
@@ -84,6 +90,16 @@ class postmaker extends activeblock {
               this.log.splice(0,1); // deletes 1 log
               this.onhand.push(new item('woodpost'));
               this.onhand.push(new item('woodpost'));
+        } } }
+      }else{
+          // no logs on hand.  Search nearby for one
+        for(var i=0; i<4; i++) {
+          var neighbor = this.getneighbor(i);
+          if(neighbor!=null) {
+            var pickup = neighbor.getoutput('log');
+            if(pickup!=null) {
+              this.log.push(pickup);
+              i=5;
       } } } }
       $("#"+ this.id +"progress").css({"width":(this.counter*5)});  // aka 60/12
     }else{

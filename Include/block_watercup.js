@@ -58,17 +58,35 @@ class watercup extends activeblock {
     }
   }
   
+  getoutput(targetitem) {
+    // Returns a target output item, or null if it isn't available
+    if(targetitem=='woodenwatercup') {
+      return this.outputitem();
+    }
+    return null;
+  }
+  
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
-    if(this.onhand.length<5) {
-      if(this.cup.length>=1) {
+    if(this.cup.length>=1) {
+      if(this.onhand.length<5) {
         if(workpoints>=1) {
           workpoints--;
           // We don't really need a counter here, as filling the cup takes only 1 tick
           this.onhand.push(new item('woodenwatercup'));
           this.cup.splice(0,1);
           findunlocks('woodenwatercup');
-    } } }
+      } }
+    }else{
+      // No cups on hand.  Search nearby for one
+      for(var i=0; i<4; i++) {
+        var neighbor = this.getneighbor(i);
+        if(neighbor!=null) {
+          var pickup = neighbor.getoutput('woodencup');
+          if(pickup !=null) {
+            this.cup.push(pickup);
+            i=5;
+    } } } }
   }
   
   drawpanel() {

@@ -52,10 +52,18 @@ class woodshovel extends activeblock {
     }
   }
   
+  getoutput(targetitem) {
+    // Returns a target output item, or null if it isn't available
+    if(targetitem=='woodshovel') {
+      return this.outputitem();
+    }
+    return null;
+  }
+  
   update() {
     // Activeblock function to allow this block to manage internal operations
-    if(this.onhand.length<5) {
-      if(this.sticks.length>=5) {
+    if(this.sticks.length>=5) {
+      if(this.onhand.length<5) {
         if(workpoints>=1) {
           workpoints--;
           this.counter++;
@@ -64,6 +72,15 @@ class woodshovel extends activeblock {
             this.sticks.splice(0,5);  // deletes 5 sticks
             this.onhand.push(new item('woodshovel','shovel', 20, 1));
             findunlocks('woodshovel');
+      } } }
+    }else{
+      for(var i=0; i<4; i++) {
+        var neighbor = this.getneighbor(i);
+        if(neighbor!=null) {
+          var pickup = neighbor.getoutput('stick');
+          if(pickup!=null) {
+            this.sticks.push(pickup);
+            i=5;
     } } } }
     $("#"+ this.id +"progress").css({"width":(this.counter*5)});
   }

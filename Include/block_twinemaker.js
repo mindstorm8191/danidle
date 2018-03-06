@@ -52,6 +52,14 @@ class twinemaker extends activeblock {
     }
   }
   
+  getoutput(targetitem) {
+    // Returns a target output item, or null if it isn't available
+    if(targetitem=='twine') {
+      return this.outputitem();
+    }
+    return null;
+  }
+  
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
     if(this.knife==null) {  // No knife loaded.  Load one now (if possible)

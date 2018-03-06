@@ -11,13 +11,13 @@
   // Add buttons to the foraging post to decide if non-food things will be collected (such as seeds or flowers)
   
   // total project # of lines
-  // index                   block_clayformmaker     block_furnace          block_mudmaker         block_storage
-  //     blocks                  block_dirtmaker         block_garbage          block_postmaker        block_twinemaker
-  //         block_bucketline        block_firewood         block_gravelmaker       block_stickmaker       block_watercup
-  //             block_butchershop       block_flintfilter      block_huntingpost      block_stonecrusher      block_woodcupmaker
-  //                 block_campfire          block_flinttoolmaker   block_logmaker         block_stonefilter       block_woodpointspear
-  //                     block_claydryer         block_foragepost       block_minerspost       block_stonemaker       block_woodshovel
-  // 430+178+207+205+282+132+221+143+167+164+341+125+214+86+147+160+149+183+142+166+81+163+198+140+142+139+106+159+114+122 = 5206 lines!
+  // index                   block_clayformmaker     block_furnace           block_mudmaker         block_storage
+  //     blocks                  block_dirtmaker         block_garbage           block_postmaker        block_twinemaker
+  //         block_bucketline        block_firewood          block_gravelmaker       block_stickmaker       block_watercup
+  //             block_butchershop       block_flintfilter       block_huntingpost      block_stonecrusher      block_woodcupmaker
+  //                 block_campfire          block_flinttoolmaker    block_logmaker         block_stonefilter       block_woodpointspear
+  //                     block_claydryer         block_foragepost        block_minerspost       block_stonemaker        block_woodshovel
+  // 431+199+209+233+310+160+249+145+180+186+404+127+218+129+150+173+154+229+181+180+85+192+202+146+197+145+122+176+131+137 = 5780 lines!
     
   // Population control - Determines how many human units on hand you have to manage
   // Factors affecting population
@@ -106,6 +106,7 @@
       var population = 4; // number of colonists in the colony.  This determines how much work can be done per 'tick'
       var workpoints = 0; // number of work points is directly affected by population, but is reset at the start of every cycle.  This is global so that all blocks
                           // can access it
+      //var loopdetector = 0;  // this is for debugging, to attempt to locate infinite loops
       
       // how to sort a JS array (based on internal values): https://stackoverflow.com/questions/2466356/javascript-object-list-sorting-by-object-property
       
@@ -221,7 +222,7 @@
             case 'storage':        Object.setPrototypeOf(blocklist[i],        storage.prototype); break;
             case 'twinemaker':     Object.setPrototypeOf(blocklist[i],     twinemaker.prototype); break;
             case 'watercup':       Object.setPrototypeOf(blocklist[i],       watercup.prototype); break;
-            case 'woodencupmaker': Object.setPrototypeOf(blocklist[i], woodencupmaker.prototype); break;
+            case 'woodencupmaker': Object.setPrototypeOf(blocklist[i],   woodcupmaker.prototype); break;
             case 'woodpointspear': Object.setPrototypeOf(blocklist[i], woodpointspear.prototype); break;
             case 'woodshovel':     Object.setPrototypeOf(blocklist[i],     woodshovel.prototype); break;
           }

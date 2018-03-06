@@ -60,6 +60,15 @@ class woodcupmaker extends activeblock {
     }
   }
   
+  getoutput(targetitem) {
+    // Returns a target output item, or null if it isn't available
+    
+    if(targetitem=='woodencup') {
+      return this.outputitem();
+    }
+    return null;
+  }
+  
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
     if(this.axe!=null) {
@@ -80,6 +89,16 @@ class woodcupmaker extends activeblock {
               this.log.splice(0,1);  // delete 1 log
               this.onhand.push(new item('woodencup'));
               findunlocks('woodencup');
+        } } }
+      }else{
+        // No logs on hand.  Search nearby for a log
+        for(var i=0; i<4; i++) {
+          var neighbor = this.getneighbor(i);
+          if(neighbor!=null) {
+            var pickup = neighbor.getoutput('log');
+            if(pickup!=null) {
+              this.log.push(pickup);
+              i=5;
       } } } }
       $("#"+ this.id +"progress").css({"width":(this.counter*6)});  // aka 60/10
     }else{

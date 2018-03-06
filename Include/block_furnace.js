@@ -109,6 +109,10 @@ class furnace extends activeblock {
     }
   }
   
+  getoutput(targetitem) {
+    return null;  // we'll worry about this whenever we start building this block again
+  }
+  
   update() {
     // activeblock function that allows any internal processes to be carried out, once per tick.  This is called from a 'global' position
     if(this.constructed!=0) {
