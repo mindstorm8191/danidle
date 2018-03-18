@@ -64,6 +64,7 @@
     <script src="include/block_stonecrusher.js"   type="text/javascript"></script>
     <script src="include/block_postmaker.js"      type="text/javascript"></script>
     <script src="include/block_minerspost.js"     type="text/javascript"></script>
+    <script src="include/block_hauler.js"         type="text/javascript"></script>
     <link rel="stylesheet" type="text/css" href="include/style.css" />
   </head>
   <body>
@@ -76,7 +77,7 @@
           <div id="blockselector" style="position:relative">
             <div id="cursorselector"       class="blockchoice" onclick="setcursor('selector')"       title="Selection; highlight items and center screen" style="background-color:red;"><img src="img/cursor.png" /></div>
             <div id="cursorstorage"        class="blockchoice" onclick="setcursor('storage')"        title="Storage; Store items (like tools)"><img src="img/storage.png" /></div>
-            <div id="cursorbucketline"     class="blockchoice" onclick="setcursor('bucketline')"     title="Bucket-line mover; Move items between blocks"><img src="img/bucketline_right.png" /></div>
+            <div id="cursorhauler"         class="blockchoice" onclick="setcursor('itemhauler')"     title="Item hauler; Move items between blocks"><img src="img/bucketline_right.png" /></div>
             <div id="cursorstickmaker"     class="blockchoice" onclick="setcursor('stickmaker')"     title="Stick-Maker; Produces sticks"><img src="img/stickmaker.png" /></div>
             <div id="cursorwoodshovel"     class="blockchoice" onclick="setcursor('woodshovel')"     title="Wood Shovel Maker; Turns sticks into a shovel"><img src="img/shovel_wood.png" /></div>
             <div id="cursorforagepost"     class="blockchoice" onclick="setcursor('foragepost')"     title="Forage Post; Collect food from surrounding lands"><img src="img/foragepost.png" /></div>
@@ -106,6 +107,7 @@
       var population = 4; // number of colonists in the colony.  This determines how much work can be done per 'tick'
       var workpoints = 0; // number of work points is directly affected by population, but is reset at the start of every cycle.  This is global so that all blocks
                           // can access it
+      var clicktrigger = 0; // Set to 1 for when blocks are waiting for input on the map. Any other map-based inputs will be ignored.
       //var loopdetector = 0;  // this is for debugging, to attempt to locate infinite loops
       
       // how to sort a JS array (based on internal values): https://stackoverflow.com/questions/2466356/javascript-object-list-sorting-by-object-property
@@ -210,6 +212,7 @@
             case 'furnace':        Object.setPrototypeOf(blocklist[i],        furnace.prototype); break;
             case 'garbage':        Object.setPrototypeOf(blocklist[i],        garbage.prototype); break;
             case 'gravelmaker':    Object.setPrototypeOf(blocklist[i],    gravelmaker.prototype); break;
+            case 'hauler':         Object.setPrototypeOf(blocklist[i],         hauler.prototype); break;
             case 'huntingpost':    Object.setPrototypeOf(blocklist[i],    huntingpost.prototype); break;
             case 'logmaker':       Object.setPrototypeOf(blocklist[i],       logmaker.prototype); break;
             case 'minerspost':     Object.setPrototypeOf(blocklist[i],     minerspost.prototype); break;
@@ -252,6 +255,7 @@
         
         var gridy = Math.floor((mousey-$("#game").offset().top)/66);
         var gridx = Math.floor((mousex-$("#game").offset().left)/66);
+        clicktigger=0; // we want to make sure any miss-clicks don't start confusing the user
         if(cursorselect=='selector') {
           // The user is only using the selector mode.  Re-center the map
           $("#game").css("left", (((13-1)*66)/2) - (gridx*66));
@@ -273,6 +277,7 @@
               case 'furnace':        var makeblock = new furnace(       gridx, gridy); break;
               case 'garbage':        var makeblock = new garbage(       gridx, gridy); break;
               case 'gravelmaker':    var makeblock = new gravelmaker(   gridx, gridy); break;
+              case 'hauler':         var makeblock = new hauler(        gridx, gridy); break;
               case 'huntingpost':    var makeblock = new huntingpost(   gridx, gridy); break;
               case 'logmaker':       var makeblock = new logmaker(      gridx, gridy); break;
               case 'minerspost':     var makeblock = new minerspost(    gridx, gridy); break;
@@ -381,7 +386,7 @@
         // Adds in all the block types that the player starts with.  We're putting this here because when we load a game, we want to zero-out the list so we can regenerate the whole thing
         $("#blockselector").html('<div id="cursorselector"       class="blockchoice" onclick="setcursor(\'selector\')"       title="Selection; highlight items and center screen" style="background-color:red;"><img src="img/cursor.png" /></div>'+
                                  '<div id="cursorstorage"        class="blockchoice" onclick="setcursor(\'storage\')"        title="Storage; Store items (like tools)"><img src="img/storage.png" /></div>'+
-                                 '<div id="cursorbucketline"     class="blockchoice" onclick="setcursor(\'bucketline\')"     title="Bucket-line mover; Move items between blocks"><img src="img/bucketline_right.png" /></div>'+
+                                 '<div id="cursorhauler"         class="blockchoice" onclick="setcursor(\'hauler\')"         title="Item hauler; Move items between blocks"><img src="img/bucketline_right.png" /></div>'+
                                  '<div id="cursorstickmaker"     class="blockchoice" onclick="setcursor(\'stickmaker\')"     title="Stick-Maker; Produces sticks"><img src="img/stickmaker.png" /></div>'+
                                  '<div id="cursorwoodshovel"     class="blockchoice" onclick="setcursor(\'woodshovel\')"     title="Wood Shovel Maker; Turns sticks into a shovel"><img src="img/shovel_wood.png" /></div>'+
                                  '<div id="cursorforagepost"     class="blockchoice" onclick="setcursor(\'foragepost\')"     title="Forage Post; Collect food from surrounding lands"><img src="img/foragepost.png" /></div>'+

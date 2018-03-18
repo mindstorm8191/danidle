@@ -65,6 +65,11 @@ class activeblock {
 
     selectblock() {
         // Handles the user clicking on this block (this isn't a backup function)
+        if(clicktrigger===1) {
+            clicktrigger=0;
+            selectedblock.handlemaptrigger(this, this.xpos, this.ypos);
+            return;
+        }
         this.drawpanel();
         selectedblock = this;
     }
